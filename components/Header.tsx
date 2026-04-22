@@ -28,10 +28,10 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-notion-border">
-      <div className="max-w-notion mx-auto px-6 h-14 flex items-center justify-between">
-        <Image src="/gnp-logo.png" alt="GNP AI Campus" height={24} width={90} className="h-6 w-auto" />
+      <div className="px-8 h-14 flex items-center">
+        <Image src="/gnp-logo.png" alt="GNP AI Campus" height={24} width={90} className="h-6 w-auto flex-none" />
 
-        <nav className="flex items-center gap-1">
+        <nav className="flex-1 flex items-center justify-center gap-1">
           {tabs.map((tab) => (
             <button
               key={tab.id}
@@ -48,8 +48,8 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
         </nav>
 
         {user && (
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-notion-secondary hidden sm:block">
+          <div className="flex-none flex items-center gap-3">
+            <span className="text-xs text-notion-secondary">
               {user.name}님, 반갑습니다.
             </span>
             <button
