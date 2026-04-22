@@ -1,6 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
 import Header, { TabType } from '@/components/Header'
 import LectureSection from '@/components/LectureSection'
 import QuizSection from '@/components/QuizSection'
@@ -8,7 +10,15 @@ import QnASection from '@/components/QnASection'
 import { LECTURES, QNA_ITEMS } from '@/lib/content'
 
 export default function Home() {
+  const { user, loading } = useAuth()
+  const router = useRouter()
   const [activeTab, setActiveTab] = useState<TabType>('lectures')
+
+  useEffect(() => {
+    if (!loading && !user) router.replace('/login')
+  }, [user, loading, router])
+
+  if (loading || !user) return null
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab)

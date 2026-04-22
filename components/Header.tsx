@@ -1,6 +1,8 @@
 'use client'
 
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
 
 export type TabType = 'lectures' | 'quiz' | 'qna'
 
@@ -11,15 +13,24 @@ interface HeaderProps {
 
 const tabs: { id: TabType; label: string }[] = [
   { id: 'lectures', label: '강의목록' },
-  { id: 'quiz', label: 'Quiz' },
-  { id: 'qna', label: 'Q&A' },
+  { id: 'quiz',     label: 'Quiz'   },
+  { id: 'qna',      label: 'Q&A'    },
 ]
 
 export default function Header({ activeTab, onTabChange }: HeaderProps) {
+  const { user, logout } = useAuth()
+  const router = useRouter()
+
+  const handleLogout = () => {
+    logout()
+    router.replace('/login')
+  }
+
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-notion-border">
       <div className="max-w-notion mx-auto px-6 h-14 flex items-center justify-between">
         <Image src="/gnp-logo.png" alt="GNP AI Campus" height={24} width={90} className="h-6 w-auto" />
+
         <nav className="flex items-center gap-1">
           {tabs.map((tab) => (
             <button
@@ -35,6 +46,20 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
             </button>
           ))}
         </nav>
+
+        {user && (
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-notion-secondary hidden sm:block">
+              {user.name}님, 반갑습니다.
+            </span>
+            <button
+              onClick={handleLogout}
+              className="text-xs text-notion-secondary hover:text-notion-text border border-notion-border rounded-md px-2.5 py-1 hover:bg-notion-surface transition-colors"
+            >
+              로그아웃
+            </button>
+          </div>
+        )}
       </div>
     </header>
   )

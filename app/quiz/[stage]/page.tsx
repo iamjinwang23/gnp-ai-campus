@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { BEGINNER_QUESTIONS, INTERMEDIATE_QUESTIONS, DiagnosticQuestion } from '@/lib/content'
+import { useAuth } from '@/contexts/AuthContext'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -155,13 +156,13 @@ function ResultScreen({ stage, questions, answers, score, onRetry, onNextStage, 
 export default function QuizPage() {
   const params  = useParams()
   const router  = useRouter()
+  const { user, loading } = useAuth()
   const stage   = params.stage as string
 
   const isValid    = stage === 'beginner' || stage === 'intermediate'
   const questions  = stage === 'beginner' ? BEGINNER_QUESTIONS : INTERMEDIATE_QUESTIONS
   const stageLabel = stage === 'beginner' ? '초급' : '중급'
 
-  // Default intermediate to locked; unlock via useEffect if localStorage confirms cleared
   const [state, setState] = useState<QuizState>({
     screen: stage === 'intermediate' ? 'locked' : 'quiz',
     currentIndex: 0,
@@ -170,6 +171,7 @@ export default function QuizPage() {
   })
 
   useEffect(() => {
+    if (!loading && !user) { router.replace('/login'); return }
     if (!isValid) { router.replace('/'); return }
     if (stage === 'intermediate') {
       if (localStorage.getItem('beginnerCleared') === 'true') {
@@ -178,7 +180,7 @@ export default function QuizPage() {
     }
   }, [stage, isValid, router])
 
-  if (!isValid) return null
+  if (loading || !user || !isValid) return null
 
   const selectAnswer = (answer: Answer) => {
     setState((s) => ({ ...s, selectedAnswer: answer }))

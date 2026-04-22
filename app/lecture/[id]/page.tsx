@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { LECTURES } from '@/lib/content'
 import MarkdownText from '@/components/MarkdownText'
+import AuthGuard from '@/components/AuthGuard'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -20,6 +21,7 @@ export default async function LecturePage({ params }: Props) {
   const next = LECTURES.find((l) => l.id === lecture.id + 1)
 
   return (
+    <AuthGuard>
     <div className="min-h-screen bg-notion-bg">
       <div className="sticky top-0 z-50 bg-notion-bg/95 backdrop-blur-sm border-b border-notion-border">
         <div className="max-w-notion mx-auto px-6 h-12 flex items-center justify-between">
@@ -84,5 +86,6 @@ export default async function LecturePage({ params }: Props) {
         </div>
       </div>
     </div>
+    </AuthGuard>
   )
 }
