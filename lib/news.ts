@@ -44,6 +44,12 @@ function parseRSS(xml: string): NewsItem[] {
     const ALLOWED = ['AI산업', 'AI기업', 'AI기술']
     if (!ALLOWED.includes(category)) continue
 
+    const pubMs = pubDateRaw ? new Date(pubDateRaw).getTime() : 0
+    const todayStart = new Date()
+    todayStart.setHours(0, 0, 0, 0)
+    const cutoff = todayStart.getTime() - 24 * 60 * 60 * 1000 // yesterday 00:00
+    if (pubMs < cutoff) continue
+
     try {
       const thumbnail = extractThumbnail(contentRaw)
       items.push({
