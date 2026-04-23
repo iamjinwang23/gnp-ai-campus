@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Fragment } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
@@ -58,26 +58,33 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
 
         {/* Desktop nav */}
         <nav className="hidden md:flex flex-1 items-center justify-center gap-1">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => handleTab(tab.id)}
-              className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-                effectiveActiveTab === tab.id
-                  ? 'bg-notion-surface text-notion-text font-medium'
-                  : 'text-notion-secondary hover:text-notion-text hover:bg-notion-surface'
-              }`}
-            >
-              {tab.label}
-            </button>
+          {tabs.map((tab, i) => (
+            <Fragment key={tab.id}>
+              {/* divider between AI 뉴스 and 강의목록 */}
+              {i === 1 && <div className="w-px h-4 bg-notion-border mx-1" />}
+              <button
+                onClick={() => handleTab(tab.id)}
+                className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
+                  effectiveActiveTab === tab.id
+                    ? 'bg-red-50 text-notion-accent font-semibold'
+                    : 'text-notion-secondary hover:text-notion-text hover:bg-notion-surface'
+                }`}
+              >
+                {tab.label}
+              </button>
+            </Fragment>
           ))}
           {isAdmin && (
-            <Link
-              href="/admin"
-              className="px-3 py-1.5 text-sm rounded-md text-notion-accent font-medium hover:bg-red-50 transition-colors"
-            >
-              관리자 대시보드
-            </Link>
+            <>
+              {/* divider between Q&A and 관리자 */}
+              <div className="w-px h-4 bg-notion-border mx-1" />
+              <Link
+                href="/admin"
+                className="px-3 py-1.5 text-sm rounded-md text-notion-accent font-medium hover:bg-red-50 transition-colors"
+              >
+                관리자
+              </Link>
+            </>
           )}
         </nav>
 
@@ -124,27 +131,33 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
             </p>
           )}
           <nav className="space-y-0.5">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => handleTab(tab.id)}
-                className={`w-full text-left px-3 py-2.5 text-sm rounded-md transition-colors ${
-                  effectiveActiveTab === tab.id
-                    ? 'bg-notion-surface text-notion-text font-medium'
-                    : 'text-notion-secondary hover:text-notion-text hover:bg-notion-surface'
-                }`}
-              >
-                {tab.label}
-              </button>
+            {tabs.map((tab, i) => (
+              <Fragment key={tab.id}>
+                {/* divider between AI 뉴스 and 강의목록 */}
+                {i === 1 && <div className="border-t border-notion-border my-1.5 mx-3" />}
+                <button
+                  onClick={() => handleTab(tab.id)}
+                  className={`w-full text-left px-3 py-2.5 text-sm rounded-md transition-colors ${
+                    effectiveActiveTab === tab.id
+                      ? 'bg-red-50 text-notion-accent font-semibold'
+                      : 'text-notion-secondary hover:text-notion-text hover:bg-notion-surface'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              </Fragment>
             ))}
             {isAdmin && (
-              <Link
-                href="/admin"
-                onClick={() => setMenuOpen(false)}
-                className="block w-full text-left px-3 py-2.5 text-sm text-notion-accent font-medium hover:bg-red-50 rounded-md transition-colors"
-              >
-                관리자 대시보드
-              </Link>
+              <>
+                <div className="border-t border-notion-border my-1.5 mx-3" />
+                <Link
+                  href="/admin"
+                  onClick={() => setMenuOpen(false)}
+                  className="block w-full text-left px-3 py-2.5 text-sm text-notion-accent font-medium hover:bg-red-50 rounded-md transition-colors"
+                >
+                  관리자
+                </Link>
+              </>
             )}
           </nav>
           {user && (
