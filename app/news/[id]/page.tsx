@@ -58,11 +58,25 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
 
         <div className="h-px bg-notion-border mb-6" />
 
-        {/* Full content with line breaks */}
-        {article.content && (
-          <div className="text-sm text-notion-text leading-relaxed mb-8 whitespace-pre-wrap">
-            {article.content}
-          </div>
+        {/* Article body — images and videos rendered inline */}
+        {article.contentHtml && (
+          <div
+            className="
+              text-sm text-notion-text leading-relaxed mb-8
+              [&_p]:mb-4
+              [&_h2]:text-base [&_h2]:font-bold [&_h2]:mt-6 [&_h2]:mb-2
+              [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:mt-4 [&_h3]:mb-2
+              [&_img]:w-full [&_img]:rounded-lg [&_img]:my-4 [&_img]:object-cover
+              [&_iframe]:w-full [&_iframe]:rounded-lg [&_iframe]:my-4 [&_iframe]:aspect-video
+              [&_a]:text-notion-accent [&_a]:underline [&_a]:break-all
+              [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:mb-4
+              [&_ol]:list-decimal [&_ol]:pl-5 [&_ol]:mb-4
+              [&_li]:mb-1
+              [&_strong]:font-semibold
+              [&_blockquote]:border-l-2 [&_blockquote]:border-notion-border [&_blockquote]:pl-4 [&_blockquote]:text-notion-secondary
+            "
+            dangerouslySetInnerHTML={{ __html: article.contentHtml }}
+          />
         )}
 
         {/* Original link */}

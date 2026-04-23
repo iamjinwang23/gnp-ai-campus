@@ -5,7 +5,7 @@ export interface NewsItem {
   author: string
   pubDate: string
   description: string   // short excerpt for card preview
-  content: string       // full article text for detail page
+  contentHtml: string   // sanitized HTML for detail page (images + videos included)
   thumbnail: string | null
   category: string
 }
@@ -49,7 +49,7 @@ function parseRSS(xml: string): NewsItem[] {
         author,
         pubDate: pubDateRaw ? new Date(pubDateRaw).toISOString() : new Date().toISOString(),
         description: stripHtml(description),
-        content: htmlToText(contentRaw),
+        contentHtml: sanitizeHtml(contentRaw),
         thumbnail: extractThumbnail(contentRaw),
         category,
       })
@@ -74,22 +74,20 @@ function stripHtml(s: string): string {
   return s.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&[a-z]+;/gi, '').replace(/\s+/g, ' ').trim()
 }
 
-function htmlToText(html: string): string {
+function sanitizeHtml(html: string): string {
   return html
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<\/p>/gi, '\n\n')
-    .replace(/<\/div>/gi, '\n')
-    .replace(/<\/h[1-6]>/gi, '\n\n')
-    .replace(/<\/li>/gi, '\n')
-    .replace(/<[^>]+>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#\d+;/g, '')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim()
+    // remove script/style blocks entirely
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    // remove event handlers
+    .replace(/\s+on\w+="[^"]*"/gi, '')
+    .replace(/\s+on\w+='[^']*'/gi, '')
+    // block javascript: hrefs
+    .replace(/href="javascript:[^"]*"/gi, 'href="#"')
+    // add loading="lazy" to images (if not already present)
+    .replace(/<img(?![^>]*loading=)/gi, '<img loading="lazy"')
+    // open external links in new tab
+    .replace(/<a\s+href="(https?:\/\/[^"]+)"/gi, '<a href="$1" target="_blank" rel="noopener noreferrer"')
 }
 
 function extractThumbnail(content: string): string | null {
