@@ -10,6 +10,7 @@ interface AuthContextValue {
   loading: boolean
   login: (user: User) => void
   logout: () => void
+  isAdmin: boolean
 }
 
 const AuthContext = createContext<AuthContextValue>({
@@ -17,6 +18,7 @@ const AuthContext = createContext<AuthContextValue>({
   loading: true,
   login: () => {},
   logout: () => {},
+  isAdmin: false,
 })
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -41,8 +43,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(AUTH_KEY)
   }
 
+  const isAdmin = user?.admin === true
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, isAdmin }}>
       {children}
     </AuthContext.Provider>
   )

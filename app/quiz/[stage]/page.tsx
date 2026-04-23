@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { BEGINNER_QUESTIONS, INTERMEDIATE_QUESTIONS, DiagnosticQuestion } from '@/lib/content'
 import { useAuth } from '@/contexts/AuthContext'
+import { saveQuizResult } from '@/lib/actions/quiz'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -194,8 +195,18 @@ export default function QuizPage() {
         return { ...s, answers: newAnswers, currentIndex: s.currentIndex + 1, selectedAnswer: null }
       }
       const score = newAnswers.filter((a, i) => a === questions[i].answer).length * 10
-      if (stage === 'beginner' && score >= PASSING_SCORE) {
+      const passed = score >= PASSING_SCORE
+      if (stage === 'beginner' && passed) {
         localStorage.setItem('beginnerCleared', 'true')
+      }
+      if (user) {
+        saveQuizResult({
+          user_email: user.email,
+          user_name: user.name,
+          stage: stage as 'beginner' | 'intermediate',
+          score,
+          passed,
+        }).catch(console.error)
       }
       return { ...s, answers: newAnswers, screen: 'result', selectedAnswer: null }
     })

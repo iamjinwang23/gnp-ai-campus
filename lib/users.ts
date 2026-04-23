@@ -2,6 +2,7 @@ export interface User {
   name: string
   email: string
   company: string
+  admin?: boolean
 }
 
 const USERS: (User & { password: string })[] = [
@@ -37,13 +38,17 @@ const USERS: (User & { password: string })[] = [
   { name: '전세웅',  email: 'wjstpdnd1392@naver.com',   company: '지앤파트너', password: '1234' },
   { name: '최은정',  email: 'choiej@g-insu.com',        company: '지앤파트너', password: '1234' },
   { name: '김정연',  email: 'redfox218@nate.com',       company: '지앤파트너', password: '1234' },
-  { name: '박진왕',  email: 'jinwang@g-insu.com',       company: '비누컴퍼니', password: '1234' },
+  { name: '박진왕',  email: 'jinwang@g-insu.com',       company: '비누컴퍼니', password: '1234', admin: true },
 ]
+
+export function getEmployeeList(): User[] {
+  return USERS.map(({ name, email, company, admin }) => ({ name, email, company, admin }))
+}
 
 export function findUser(email: string, password: string): User | null {
   const u = USERS.find(
     (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
   )
   if (!u) return null
-  return { name: u.name, email: u.email, company: u.company }
+  return { name: u.name, email: u.email, company: u.company, admin: u.admin }
 }
