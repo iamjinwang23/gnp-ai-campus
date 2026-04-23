@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -37,11 +36,10 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-notion-border">
       {/* ── Main bar ─────────────────────────────── */}
       <div className="px-6 md:px-8 h-14 flex items-center">
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src="/gnp-logo.png"
           alt="GNP AI Campus"
-          height={32}
-          width={294}
           className="h-6 md:h-8 w-auto flex-none"
         />
 

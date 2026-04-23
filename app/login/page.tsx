@@ -2,7 +2,6 @@
 
 import { useState, useEffect, FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import { findUser } from '@/lib/users'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -40,12 +39,11 @@ export default function LoginPage() {
     <div className="min-h-screen bg-notion-bg flex items-center justify-center px-6">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <Image
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src="/gnp-logo.png"
             alt="GNP AI Campus"
-            width={294}
-            height={32}
-            className="mx-auto h-8 w-auto mb-6"
+            className="mx-auto h-10 w-auto mb-6"
           />
           <h1 className="font-serif text-xl font-semibold text-notion-text">로그인</h1>
           <p className="mt-1 text-sm text-notion-secondary">GNP AI Campus에 오신 것을 환영합니다</p>
