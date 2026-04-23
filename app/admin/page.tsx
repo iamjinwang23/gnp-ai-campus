@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { createServerClient } from '@/lib/supabase-server'
 import AdminGuard from '@/components/AdminGuard'
 import EmployeeTable from './_components/EmployeeTable'
