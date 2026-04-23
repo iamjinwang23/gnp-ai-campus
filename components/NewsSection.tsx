@@ -24,10 +24,7 @@ export default function NewsSection() {
   }, [])
 
   return (
-    <section id="news" className="max-w-notion mx-auto px-6 py-8">
-      <h2 className="font-serif text-xl font-bold text-notion-text mb-1">AI 뉴스</h2>
-      <p className="text-sm text-notion-secondary mb-6">최신 AI 업계 소식을 확인하세요</p>
-
+    <section id="news" className="max-w-notion mx-auto px-6 pb-8">
       {loading && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
