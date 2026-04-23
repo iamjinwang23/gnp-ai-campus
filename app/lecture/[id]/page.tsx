@@ -35,9 +35,9 @@ export default async function LecturePage({ params }: Props) {
         </div>
       </div>
       <div className="bg-notion-text">
-        <div className="max-w-notion mx-auto px-6 py-10">
+        <div className="max-w-notion mx-auto px-6 py-8 md:py-10">
           <span className="text-xs font-semibold text-white/50 uppercase tracking-widest">{lecture.number}</span>
-          <h1 className="mt-2 font-serif text-2xl md:text-3xl font-bold text-white leading-snug">{lecture.title}</h1>
+          <h1 className="mt-2 font-serif text-xl md:text-3xl font-bold text-white leading-snug">{lecture.title}</h1>
           {lecture.description && <p className="mt-2 text-sm text-white/60 leading-relaxed">{lecture.description}</p>}
           {lecture.topics.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2">

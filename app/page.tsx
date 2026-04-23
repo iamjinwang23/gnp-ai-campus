@@ -33,14 +33,14 @@ export default function Home() {
       <Header activeTab={activeTab} onTabChange={handleTabChange} />
 
       {/* Hero */}
-      <section className="max-w-notion mx-auto px-6 pt-20 pb-10">
-        <h1 className="font-serif text-4xl md:text-5xl font-bold text-notion-text leading-tight">
+      <section className="max-w-notion mx-auto px-6 pt-12 md:pt-20 pb-8 md:pb-10">
+        <h1 className="font-serif text-3xl md:text-5xl font-bold text-notion-text leading-tight">
           GNP AI Campus
         </h1>
-        <p className="mt-4 text-notion-secondary text-base leading-relaxed max-w-lg">
+        <p className="mt-3 md:mt-4 text-notion-secondary text-sm md:text-base leading-relaxed max-w-lg">
           생성형 AI부터 바이브코딩까지 — 실무에 바로 쓰는 AI 교육 커리큘럼
         </p>
-        <div className="mt-8 h-px bg-notion-border" />
+        <div className="mt-6 md:mt-8 h-px bg-notion-border" />
       </section>
 
       <LectureSection lectures={LECTURES} />
