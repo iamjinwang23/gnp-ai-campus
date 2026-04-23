@@ -7,13 +7,12 @@ import Header, { TabType } from '@/components/Header'
 import LectureSection from '@/components/LectureSection'
 import QuizSection from '@/components/QuizSection'
 import QnASection from '@/components/QnASection'
-import NewsSection from '@/components/NewsSection'
 import { LECTURES, QNA_ITEMS } from '@/lib/content'
 
 export default function Home() {
   const { user, loading } = useAuth()
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<TabType>('news')
+  const [activeTab, setActiveTab] = useState<TabType>('lectures')
 
   useEffect(() => {
     if (!loading && !user) router.replace('/login')
@@ -23,7 +22,7 @@ export default function Home() {
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab)
-    const sectionId = tab === 'news' ? 'news' : tab === 'lectures' ? 'lectures' : tab === 'quiz' ? 'quiz' : 'qna'
+    const sectionId = tab === 'lectures' ? 'lectures' : tab === 'quiz' ? 'quiz' : 'qna'
     setTimeout(() => {
       document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }, 0)
@@ -43,12 +42,6 @@ export default function Home() {
         </p>
         <div className="mt-6 md:mt-8 h-px bg-notion-border" />
       </section>
-
-      <NewsSection />
-
-      <div className="max-w-notion mx-auto px-6">
-        <div className="h-px bg-notion-border" />
-      </div>
 
       <LectureSection lectures={LECTURES} />
 

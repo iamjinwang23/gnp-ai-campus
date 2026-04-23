@@ -1,15 +1,15 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 
 export type TabType = 'news' | 'lectures' | 'quiz' | 'qna'
 
 interface HeaderProps {
-  activeTab: TabType
-  onTabChange: (tab: TabType) => void
+  activeTab?: TabType
+  onTabChange?: (tab: TabType) => void
 }
 
 const tabs: { id: TabType; label: string }[] = [
@@ -22,7 +22,10 @@ const tabs: { id: TabType; label: string }[] = [
 export default function Header({ activeTab, onTabChange }: HeaderProps) {
   const { user, logout, isAdmin } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
+
+  const effectiveActiveTab: TabType | undefined = pathname.startsWith('/news') ? 'news' : activeTab
 
   const handleLogout = () => {
     logout()
@@ -30,8 +33,16 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
   }
 
   const handleTab = (tab: TabType) => {
-    onTabChange(tab)
     setMenuOpen(false)
+    if (tab === 'news') {
+      router.push('/news')
+      return
+    }
+    if (onTabChange) {
+      onTabChange(tab)
+    } else {
+      router.push('/')
+    }
   }
 
   return (
@@ -52,7 +63,7 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
               key={tab.id}
               onClick={() => handleTab(tab.id)}
               className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
-                activeTab === tab.id
+                effectiveActiveTab === tab.id
                   ? 'bg-notion-surface text-notion-text font-medium'
                   : 'text-notion-secondary hover:text-notion-text hover:bg-notion-surface'
               }`}
@@ -118,7 +129,7 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
                 key={tab.id}
                 onClick={() => handleTab(tab.id)}
                 className={`w-full text-left px-3 py-2.5 text-sm rounded-md transition-colors ${
-                  activeTab === tab.id
+                  effectiveActiveTab === tab.id
                     ? 'bg-notion-surface text-notion-text font-medium'
                     : 'text-notion-secondary hover:text-notion-text hover:bg-notion-surface'
                 }`}

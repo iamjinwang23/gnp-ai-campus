@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import type { NewsItem } from '@/lib/news'
 
 export default function NewsSection() {
@@ -62,12 +61,11 @@ export default function NewsSection() {
             >
               <div className="aspect-video relative bg-gray-100">
                 {item.thumbnail ? (
-                  <Image
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
                     src={item.thumbnail}
                     alt={item.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">

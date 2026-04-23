@@ -4,7 +4,8 @@ export interface NewsItem {
   link: string
   author: string
   pubDate: string
-  description: string
+  description: string   // short excerpt for card preview
+  content: string       // full article text for detail page
   thumbnail: string | null
   category: string
 }
@@ -34,7 +35,7 @@ function parseRSS(xml: string): NewsItem[] {
     const author = unwrap(getField(block, 'dc:creator'))
     const pubDateRaw = getField(block, 'pubDate').trim()
     const description = unwrap(getField(block, 'description'))
-    const content = getField(block, 'content:encoded')
+    const contentRaw = unwrap(getField(block, 'content:encoded'))
     const category = unwrap(getField(block, 'category'))
 
     const idMatch = link.match(/idxno=(\d+)/)
@@ -48,7 +49,8 @@ function parseRSS(xml: string): NewsItem[] {
         author,
         pubDate: pubDateRaw ? new Date(pubDateRaw).toISOString() : new Date().toISOString(),
         description: stripHtml(description),
-        thumbnail: extractThumbnail(content),
+        content: htmlToText(contentRaw),
+        thumbnail: extractThumbnail(contentRaw),
         category,
       })
     } catch {
@@ -72,9 +74,36 @@ function stripHtml(s: string): string {
   return s.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&[a-z]+;/gi, '').replace(/\s+/g, ' ').trim()
 }
 
+function htmlToText(html: string): string {
+  return html
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/p>/gi, '\n\n')
+    .replace(/<\/div>/gi, '\n')
+    .replace(/<\/h[1-6]>/gi, '\n\n')
+    .replace(/<\/li>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#\d+;/g, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
 function extractThumbnail(content: string): string | null {
+  // class="type:primaryImage" before src
   const m1 = content.match(/<img[^>]+class="[^"]*type:primaryImage[^"]*"[^>]+src="([^"]+)"/)
-  if (m1) return m1[1]
+  if (m1) return decodeEntities(m1[1])
+  // src before class="type:primaryImage"
   const m2 = content.match(/<img[^>]+src="([^"]+)"[^>]+class="[^"]*type:primaryImage[^"]*"/)
-  return m2?.[1] ?? null
+  if (m2) return decodeEntities(m2[1])
+  // fallback: first absolute URL image
+  const m3 = content.match(/<img[^>]+src="(https?:\/\/[^"]+)"/)
+  return m3 ? decodeEntities(m3[1]) : null
+}
+
+function decodeEntities(s: string): string {
+  return s.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
 }

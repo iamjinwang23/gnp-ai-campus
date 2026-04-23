@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation'
-import Image from 'next/image'
 import Link from 'next/link'
 import { fetchNews } from '@/lib/news'
 
@@ -16,7 +15,7 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
         {/* Back + Category */}
         <div className="flex items-center justify-between mb-6">
           <Link
-            href="/"
+            href="/news"
             className="flex items-center gap-1 text-sm text-notion-secondary hover:text-notion-text transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -31,13 +30,12 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
 
         {/* Thumbnail */}
         {article.thumbnail && (
-          <div className="aspect-video relative rounded-xl overflow-hidden mb-6 bg-gray-100">
-            <Image
+          <div className="aspect-video rounded-xl overflow-hidden mb-6 bg-gray-100">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
               src={article.thumbnail}
               alt={article.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 672px"
+              className="w-full h-full object-cover"
             />
           </div>
         )}
@@ -60,9 +58,11 @@ export default async function NewsDetailPage({ params }: { params: Promise<{ id:
 
         <div className="h-px bg-notion-border mb-6" />
 
-        {/* Description */}
-        {article.description && (
-          <p className="text-sm text-notion-text leading-relaxed mb-8">{article.description}</p>
+        {/* Full content with line breaks */}
+        {article.content && (
+          <div className="text-sm text-notion-text leading-relaxed mb-8 whitespace-pre-wrap">
+            {article.content}
+          </div>
         )}
 
         {/* Original link */}
