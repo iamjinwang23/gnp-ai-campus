@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 
-export type TabType = 'lectures' | 'quiz' | 'qna'
+export type TabType = 'news' | 'lectures' | 'quiz' | 'qna'
 
 interface HeaderProps {
   activeTab: TabType
@@ -13,6 +13,7 @@ interface HeaderProps {
 }
 
 const tabs: { id: TabType; label: string }[] = [
+  { id: 'news',     label: 'AI 뉴스' },
   { id: 'lectures', label: '강의목록' },
   { id: 'quiz',     label: 'Quiz'   },
   { id: 'qna',      label: 'Q&A'    },
