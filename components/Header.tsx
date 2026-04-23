@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 
 export type TabType = 'lectures' | 'quiz' | 'qna'
@@ -18,7 +19,7 @@ const tabs: { id: TabType; label: string }[] = [
 ]
 
 export default function Header({ activeTab, onTabChange }: HeaderProps) {
-  const { user, logout } = useAuth()
+  const { user, logout, isAdmin } = useAuth()
   const router = useRouter()
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -58,6 +59,14 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
               {tab.label}
             </button>
           ))}
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="px-3 py-1.5 text-sm rounded-md text-notion-accent font-medium hover:bg-red-50 transition-colors"
+            >
+              관리자 대시보드
+            </Link>
+          )}
         </nav>
 
         {/* Desktop user section */}
@@ -116,6 +125,15 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
                 {tab.label}
               </button>
             ))}
+            {isAdmin && (
+              <Link
+                href="/admin"
+                onClick={() => setMenuOpen(false)}
+                className="block w-full text-left px-3 py-2.5 text-sm text-notion-accent font-medium hover:bg-red-50 rounded-md transition-colors"
+              >
+                관리자 대시보드
+              </Link>
+            )}
           </nav>
           {user && (
             <div className="mt-2 pt-2 border-t border-notion-border">
