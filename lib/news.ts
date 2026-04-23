@@ -41,6 +41,9 @@ function parseRSS(xml: string): NewsItem[] {
     const idMatch = link.match(/idxno=(\d+)/)
     const id = idMatch?.[1] ?? encodeURIComponent(link)
 
+    const ALLOWED = ['AI산업', 'AI기업', 'AI기술']
+    if (!ALLOWED.includes(category)) continue
+
     try {
       const thumbnail = extractThumbnail(contentRaw)
       items.push({
