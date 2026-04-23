@@ -42,6 +42,7 @@ function parseRSS(xml: string): NewsItem[] {
     const id = idMatch?.[1] ?? encodeURIComponent(link)
 
     try {
+      const thumbnail = extractThumbnail(contentRaw)
       items.push({
         id,
         title,
@@ -49,8 +50,8 @@ function parseRSS(xml: string): NewsItem[] {
         author,
         pubDate: pubDateRaw ? new Date(pubDateRaw).toISOString() : new Date().toISOString(),
         description: stripHtml(description),
-        contentHtml: sanitizeHtml(contentRaw),
-        thumbnail: extractThumbnail(contentRaw),
+        contentHtml: sanitizeHtml(contentRaw, thumbnail),
+        thumbnail,
         category,
       })
     } catch {
@@ -74,8 +75,8 @@ function stripHtml(s: string): string {
   return s.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&[a-z]+;/gi, '').replace(/\s+/g, ' ').trim()
 }
 
-function sanitizeHtml(html: string): string {
-  return html
+function sanitizeHtml(html: string, thumbnailUrl?: string | null): string {
+  let result = html
     // remove script/style blocks entirely
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '')
@@ -84,10 +85,20 @@ function sanitizeHtml(html: string): string {
     .replace(/\s+on\w+='[^']*'/gi, '')
     // block javascript: hrefs
     .replace(/href="javascript:[^"]*"/gi, 'href="#"')
-    // add loading="lazy" to images (if not already present)
+    // remove type:primaryImage — already shown as cover thumbnail
+    .replace(/<img[^>]+class="[^"]*type:primaryImage[^"]*"[^>]*\/?>/gi, '')
+    // add loading="lazy" to remaining images
     .replace(/<img(?![^>]*loading=)/gi, '<img loading="lazy"')
     // open external links in new tab
     .replace(/<a\s+href="(https?:\/\/[^"]+)"/gi, '<a href="$1" target="_blank" rel="noopener noreferrer"')
+
+  // also remove any remaining img whose src matches the thumbnail URL
+  if (thumbnailUrl) {
+    const escaped = thumbnailUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    result = result.replace(new RegExp(`<img[^>]+src="${escaped}"[^>]*\\/?>`, 'gi'), '')
+  }
+
+  return result
 }
 
 function extractThumbnail(content: string): string | null {
