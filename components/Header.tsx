@@ -40,9 +40,9 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
         <Image
           src="/gnp-logo.png"
           alt="GNP AI Campus"
-          height={24}
-          width={90}
-          className="h-6 w-auto flex-none"
+          height={32}
+          width={294}
+          className="h-6 md:h-8 w-auto flex-none"
         />
 
         {/* Desktop nav */}

@@ -43,7 +43,7 @@ export default function LoginPage() {
           <Image
             src="/gnp-logo.png"
             alt="GNP AI Campus"
-            width={120}
+            width={294}
             height={32}
             className="mx-auto h-8 w-auto mb-6"
           />
