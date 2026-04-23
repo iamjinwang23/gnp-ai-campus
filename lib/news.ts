@@ -12,14 +12,29 @@ export interface NewsItem {
 
 const RSS_URL = 'https://cdn.aitimes.com/rss/gn_rss_allArticle.xml'
 
+// in-memory conditional-request state (warm instance reuse)
+let cachedItems: NewsItem[] | null = null
+let cachedEtag: string | null = null
+let cachedLastModified: string | null = null
+
 export async function fetchNews(): Promise<NewsItem[]> {
   try {
-    const res = await fetch(RSS_URL, { next: { revalidate: 1800 } })
-    if (!res.ok) return []
+    const headers: Record<string, string> = { 'Accept-Encoding': 'gzip' }
+    if (cachedEtag) headers['If-None-Match'] = cachedEtag
+    else if (cachedLastModified) headers['If-Modified-Since'] = cachedLastModified
+
+    const res = await fetch(RSS_URL, { next: { revalidate: 1800 }, headers })
+
+    if (res.status === 304 && cachedItems) return cachedItems
+    if (!res.ok) return cachedItems ?? []
+
+    cachedEtag = res.headers.get('etag')
+    cachedLastModified = res.headers.get('last-modified')
     const xml = await res.text()
-    return parseRSS(xml)
+    cachedItems = parseRSS(xml)
+    return cachedItems
   } catch {
-    return []
+    return cachedItems ?? []
   }
 }
 
