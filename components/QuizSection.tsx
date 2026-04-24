@@ -1,66 +1,81 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { Level, LEVEL_CONFIG } from '@/hooks/useLearningPath'
 
-export default function QuizSection() {
+interface QuizSectionProps {
+  stage: Level
+  isVisible: boolean
+  isCleared: boolean
+}
+
+const QUIZ_META: Record<Level, { duration: string; count: number }> = {
+  beginner: { duration: '약 5–8분', count: 10 },
+  intermediate: { duration: '약 8–12분', count: 10 },
+  advanced: { duration: '약 10–15분', count: 10 },
+}
+
+export default function QuizSection({ stage, isVisible, isCleared }: QuizSectionProps) {
   const router = useRouter()
-  const [beginnerCleared, setBeginnerCleared] = useState(false)
+  const config = LEVEL_CONFIG[stage]
+  const meta = QUIZ_META[stage]
 
-  useEffect(() => {
-    setBeginnerCleared(localStorage.getItem('beginnerCleared') === 'true')
-  }, [])
+  if (!isVisible) {
+    return (
+      <div className="max-w-notion mx-auto px-6 pb-10">
+        <div className="flex items-center gap-3 p-4 rounded-xl border border-dashed border-notion-border text-notion-secondary text-sm">
+          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+          </svg>
+          <span>모든 강의를 읽으면 {config.label} 퀴즈가 열립니다</span>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <section id="quiz" className="max-w-notion mx-auto px-6 py-12">
-      <div className="mb-8">
-        <h2 className="font-serif text-2xl font-semibold text-notion-text">생성형 AI 이해도 진단</h2>
-        <p className="mt-1 text-notion-secondary text-sm">내 AI 이해 수준을 확인해보세요</p>
-      </div>
-
-      <div className="space-y-4">
-        {/* 초급 */}
-        <div className={`bg-white border rounded-xl p-6 transition-all ${
-          beginnerCleared ? 'border-notion-accent/40 shadow-sm' : 'border-notion-border hover:border-notion-accent/30'
-        }`}>
-          <h3 className="font-serif text-base font-semibold text-notion-text mb-0.5">
-            초급
-            {beginnerCleared && <span className="text-xs font-normal text-notion-accent ml-2">✓ 통과</span>}
-          </h3>
-          <p className="text-sm text-notion-secondary mb-1">기본 개념과 도구 이해도</p>
-          <p className="text-xs text-notion-secondary mb-4">10문항 · 약 5–8분</p>
-          <button
-            onClick={() => router.push('/quiz/beginner')}
-            className="px-4 py-2 bg-notion-accent text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors"
-          >
-            {beginnerCleared ? '다시 도전하기' : '시작하기'}
-          </button>
-        </div>
-
-        {/* 중급 */}
-        <div className={`bg-white border rounded-xl p-6 transition-all ${
-          beginnerCleared
-            ? 'border-notion-border hover:border-notion-accent/30'
-            : 'border-notion-border opacity-50'
-        }`}>
-          <h3 className="font-serif text-base font-semibold text-notion-text mb-0.5 flex items-center gap-1.5">
-            {!beginnerCleared && <span>🔒</span>}
-            중급
-          </h3>
-          <p className="text-sm text-notion-secondary mb-1">실무 활용과 고급 기법</p>
-          <p className="text-xs text-notion-secondary mb-4">10문항 · 약 8–12분</p>
-          {beginnerCleared ? (
-            <button
-              onClick={() => router.push('/quiz/intermediate')}
-              className="px-4 py-2 bg-notion-accent text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors"
-            >
-              도전하기
-            </button>
-          ) : (
-            <p className="text-xs text-notion-secondary">초급을 먼저 통과해주세요</p>
-          )}
+    <div className="max-w-notion mx-auto px-6 pb-10">
+      <div className={`bg-white border rounded-xl p-6 transition-all ${
+        isCleared ? 'border-green-300 bg-green-50/30' : 'border-notion-accent/40 shadow-sm'
+      }`}>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h3 className="font-serif text-base font-semibold text-notion-text flex items-center gap-2">
+              {config.label} 이해도 진단
+              {isCleared && (
+                <span className="inline-flex items-center gap-1 text-xs font-normal text-green-600 bg-green-100 px-2 py-0.5 rounded-full">
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
+                  통과
+                </span>
+              )}
+            </h3>
+            <p className="text-sm text-notion-secondary mt-0.5">
+              {meta.count}문항 · {meta.duration}
+            </p>
+          </div>
+          <div className="flex gap-2 shrink-0">
+            {isCleared && (
+              <button
+                onClick={() => router.push(`/quiz/${stage}`)}
+                className="px-3 py-1.5 text-sm font-medium rounded-lg border border-notion-border text-notion-secondary hover:bg-notion-surface transition-colors"
+              >
+                다시 도전
+              </button>
+            )}
+            {!isCleared && (
+              <button
+                onClick={() => router.push(`/quiz/${stage}`)}
+                className="px-4 py-2 bg-notion-accent text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors"
+              >
+                퀴즈 시작
+              </button>
+            )}
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   )
 }

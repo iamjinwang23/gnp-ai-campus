@@ -5,6 +5,7 @@ export interface LectureSection {
 
 export interface Lecture {
   id: number
+  level: 'beginner' | 'intermediate' | 'advanced'
   number: string
   title: string
   description?: string
@@ -14,7 +15,7 @@ export interface Lecture {
 
 export interface DiagnosticQuestion {
   id: number
-  level: 'beginner' | 'intermediate'
+  level: 'beginner' | 'intermediate' | 'advanced'
   question: string
   options: { id: 'A' | 'B' | 'C' | 'D'; text: string }[]
   answer: 'A' | 'B' | 'C' | 'D'
@@ -30,6 +31,7 @@ export interface QnAItem {
 export const LECTURES: Lecture[] = [
   {
     id: 1,
+    level: 'beginner',
     number: '1강',
     title: '생성형 AI의 기초',
     description: '생성형 AI의 개념, 모델 비교, MCP 이해',
@@ -129,6 +131,7 @@ export const LECTURES: Lecture[] = [
   },
   {
     id: 2,
+    level: 'beginner',
     number: '2강',
     title: '생성형 AI로 일 잘하는 조직 만들기',
     description: '디지털 전환, 조직 변화 관리, AI 시대 리더십',
@@ -197,6 +200,7 @@ export const LECTURES: Lecture[] = [
   },
   {
     id: 3,
+    level: 'beginner',
     number: '3강',
     title: '프롬프트 엔지니어링 I',
     description: '프롬프트의 이해와 CO-STAR 프레임워크',
@@ -280,6 +284,7 @@ AI의 기본적인 역할과 행동 방식을 정의합니다. 페르소나, 톤
   },
   {
     id: 4,
+    level: 'beginner',
     number: '4강',
     title: '프롬프트 엔지니어링 II',
     description: '추론/비추론 모델 이해와 구조화된 결과 받기',
@@ -350,6 +355,7 @@ Word/한글 문서 형식:
   },
   {
     id: 5,
+    level: 'beginner',
     number: '5강',
     title: '페르소나 설정을 통한 업무 피드백',
     description: '페르소나 활용으로 다양한 관점의 업무 피드백 받기',
@@ -423,6 +429,7 @@ instructions 태그에 피드백 형식을 지정합니다
 
   {
     id: 6,
+    level: 'intermediate',
     number: '6강',
     title: 'AI 딥리서치 & 보고서 작성',
     description: 'AI 딥리서치 도구를 활용해 조사·분석부터 완성도 높은 보고서 작성까지 마스터합니다.',
@@ -488,6 +495,7 @@ instructions 태그에 피드백 형식을 지정합니다
   },
   {
     id: 7,
+    level: 'intermediate',
     number: '7강',
     title: 'AI 에이전트 & 업무 자동화',
     description: 'AI 에이전트 개념을 이해하고 n8n, Make 등 노코드 자동화 도구로 반복 업무를 자동화합니다.',
@@ -561,6 +569,7 @@ instructions 태그에 피드백 형식을 지정합니다
   },
   {
     id: 8,
+    level: 'intermediate',
     number: '8강',
     title: 'AI 실무 도구 활용',
     description: 'NotebookLM, AI 데이터 정리, 업무 기획 등 실무에서 바로 쓸 수 있는 AI 도구를 실습합니다.',
@@ -634,6 +643,7 @@ instructions 태그에 피드백 형식을 지정합니다
   },
   {
     id: 9,
+    level: 'intermediate',
     number: '9강',
     title: 'AI 활용 포트폴리오 프로젝트',
     description: '실제 AI 활용 포트폴리오 프로젝트 4가지를 분석하고, 나만의 프로젝트 기획 방법을 배웁니다.',
@@ -721,6 +731,7 @@ instructions 태그에 피드백 형식을 지정합니다
   },
   {
     id: 10,
+    level: 'intermediate',
     number: '10강',
     title: 'ChatGPT 고급 설정 & MyGPTs',
     description: 'ChatGPT 커스텀 설정, 나만의 GPT 만들기, 메모리 기능을 활용해 AI를 완전히 내 것으로 만듭니다.',
@@ -799,6 +810,7 @@ instructions 태그에 피드백 형식을 지정합니다
   },
   {
     id: 11,
+    level: 'advanced',
     number: '11강',
     title: '바이브코딩 입문',
     description: '코딩 지식 없이도 AI와 대화하며 앱을 만드는 바이브코딩의 개념과 주요 도구를 소개합니다.',
@@ -866,6 +878,7 @@ instructions 태그에 피드백 형식을 지정합니다
   },
   {
     id: 12,
+    level: 'advanced',
     number: '12강',
     title: '바이브코딩 실전 — PRD와 기술 명세',
     description: 'PRD(제품 요구 문서)와 기술 명세서 작성 원칙을 배우고 실전 프로젝트 3가지를 실습합니다.',
@@ -936,6 +949,7 @@ instructions 태그에 피드백 형식을 지정합니다
   },
   {
     id: 13,
+    level: 'advanced',
     number: '13강',
     title: '바이브코딩 실전 — ChatGPT & Claude 활용',
     description: 'ChatGPT+VSCode 조합과 Claude의 바이브코딩 특성을 이해하고 효과적인 협업 방법을 배웁니다.',
@@ -1020,6 +1034,7 @@ Projects 기능을 사용하면 프로젝트 관련 파일을 업로드해두고
   },
   {
     id: 14,
+    level: 'advanced',
     number: '14강',
     title: '바이브코딩 실전 — 프로젝트 완성',
     description: '4단계 프로젝트 방법론으로 기획부터 배포까지 실제 서비스를 완성하는 전 과정을 배웁니다.',
@@ -1105,6 +1120,7 @@ Vercel을 사용한 Next.js 앱 배포 (5분 완성):
   },
   {
     id: 15,
+    level: 'advanced',
     number: '15강',
     title: '개발 환경 설정 완전 가이드',
     description: 'VS Code, Node.js, GitHub, Vercel까지 바이브코딩에 필요한 모든 개발 환경을 단계별로 설정합니다.',
@@ -1505,5 +1521,128 @@ export const QNA_ITEMS: QnAItem[] = [
     id: 8,
     question: 'n8n과 Make 중 어떤 자동화 도구를 먼저 배워야 하나요?',
     answer: '**입문자에게는 Make(구 Integromat)를 먼저 권장합니다.**\n\n**Make 선택 이유**: 시각적 플로우가 직관적이고, 무료 플랜에서도 충분한 기능을 제공하며, 학습 자료가 풍부합니다.\n\n**n8n이 적합한 경우**: 데이터를 외부로 보내지 않고 자체 서버에서 운영하고 싶거나(온프레미스), 더 복잡한 로직과 코딩 연동이 필요한 중급 이상 사용자에게 적합합니다.\n\n두 도구 모두 기본 개념은 유사하므로 Make에서 자동화 개념을 익힌 뒤 필요에 따라 n8n으로 넘어가는 것이 좋습니다.',
+  },
+]
+
+export const ADVANCED_QUESTIONS: DiagnosticQuestion[] = [
+  {
+    id: 1, level: 'advanced',
+    question: '바이브코딩(Vibe Coding)의 핵심 개념으로 가장 적절한 것은?',
+    options: [
+      { id: 'A', text: '전통적인 IDE에서 직접 코드를 한 줄씩 작성하는 방식' },
+      { id: 'B', text: 'AI에게 프롬프트를 주어 코드를 생성·수정하며 개발하는 방식' },
+      { id: 'C', text: '코드 없이 드래그앤드롭으로 앱을 만드는 노코드 방식' },
+      { id: 'D', text: 'AI가 자동으로 테스트를 작성하고 배포까지 처리하는 방식' },
+    ],
+    answer: 'B',
+    explanation: '바이브코딩은 AI에게 자연어 프롬프트를 제공해 코드를 생성·수정하는 개발 방식으로, 개발자가 세부 구현보다 의도와 방향을 지시하는 데 집중합니다.',
+  },
+  {
+    id: 2, level: 'advanced',
+    question: 'Claude Code와 Cursor의 가장 큰 차이점은?',
+    options: [
+      { id: 'A', text: 'Claude Code는 무료이고 Cursor는 유료이다' },
+      { id: 'B', text: 'Claude Code는 이미지만 처리하고 Cursor는 텍스트만 처리한다' },
+      { id: 'C', text: 'Claude Code는 터미널 기반 CLI이고 Cursor는 IDE에 통합된 AI 코딩 도구이다' },
+      { id: 'D', text: 'Claude Code는 파이썬만 지원하고 Cursor는 모든 언어를 지원한다' },
+    ],
+    answer: 'C',
+    explanation: 'Claude Code는 터미널에서 실행하는 CLI 도구로 파일시스템 전체에 접근하며 자율적으로 작업합니다. Cursor는 VS Code 기반 IDE에 AI가 통합된 환경으로 에디터 내에서 코드 제안과 편집을 제공합니다.',
+  },
+  {
+    id: 3, level: 'advanced',
+    question: '효과적인 바이브코딩 프롬프트의 핵심 요소가 아닌 것은?',
+    options: [
+      { id: 'A', text: '목표(What): 만들고자 하는 결과물을 명확히 설명' },
+      { id: 'B', text: '맥락(Context): 프로젝트 배경과 기존 코드 구조 제공' },
+      { id: 'C', text: '형식(Format): 원하는 출력 형태와 코드 스타일 지정' },
+      { id: 'D', text: '분량(Length): 반드시 1000자 이상의 긴 프롬프트 작성' },
+    ],
+    answer: 'D',
+    explanation: '좋은 프롬프트는 목표·맥락·형식을 명확히 담되, 길이가 중요한 것이 아닙니다. 오히려 불필요하게 긴 프롬프트는 AI가 핵심을 파악하기 어렵게 만들 수 있습니다.',
+  },
+  {
+    id: 4, level: 'advanced',
+    question: 'AI가 생성한 코드를 실무에 사용하기 전 가장 먼저 해야 할 일은?',
+    options: [
+      { id: 'A', text: '즉시 프로덕션 서버에 배포한다' },
+      { id: 'B', text: '코드를 수정 없이 복사해 사용한다' },
+      { id: 'C', text: '코드가 실제로 동작하는지 직접 실행하고 테스트한다' },
+      { id: 'D', text: '동일한 요청을 다른 AI 모델에도 보내 비교한다' },
+    ],
+    answer: 'C',
+    explanation: 'AI가 생성한 코드는 논리적으로 보여도 실제 실행 시 오류가 발생하거나 의도와 다를 수 있습니다. 반드시 직접 실행하고 테스트해 동작을 검증해야 합니다.',
+  },
+  {
+    id: 5, level: 'advanced',
+    question: '바이브코딩에서 AI에게 "컨텍스트(Context)"를 제공하는 주된 이유는?',
+    options: [
+      { id: 'A', text: 'AI의 응답 속도를 빠르게 하기 위해' },
+      { id: 'B', text: 'AI가 프로젝트 목적과 제약 조건을 이해해 더 적합한 코드를 생성하도록' },
+      { id: 'C', text: 'AI가 더 많은 프로그래밍 언어를 지원하도록 하기 위해' },
+      { id: 'D', text: '유료 플랜의 프리미엄 기능을 활성화하기 위해' },
+    ],
+    answer: 'B',
+    explanation: 'AI는 프로젝트의 배경, 기술 스택, 기존 코드 패턴을 알아야 일관성 있고 적합한 코드를 생성합니다. 컨텍스트 없이는 일반적인 코드만 출력할 수 있습니다.',
+  },
+  {
+    id: 6, level: 'advanced',
+    question: '바이브코딩으로 버그를 수정 요청할 때 가장 효과적인 방법은?',
+    options: [
+      { id: 'A', text: '"버그가 있어요. 고쳐주세요"라고만 작성한다' },
+      { id: 'B', text: '에러 메시지 전체와 해당 코드 맥락을 함께 제공한다' },
+      { id: 'C', text: '코드 전체를 삭제하고 처음부터 다시 작성해달라고 한다' },
+      { id: 'D', text: '에러가 발생한 줄 번호만 알려준다' },
+    ],
+    answer: 'B',
+    explanation: 'AI가 버그를 정확히 수정하려면 에러 메시지, 관련 코드, 기대했던 동작을 함께 알아야 합니다. 구체적인 정보가 많을수록 정확한 수정이 가능합니다.',
+  },
+  {
+    id: 7, level: 'advanced',
+    question: '바이브코딩 결과물을 실무에 활용할 때 반드시 검토해야 할 사항은?',
+    options: [
+      { id: 'A', text: 'AI가 작성했으므로 완벽하다고 믿고 그대로 사용한다' },
+      { id: 'B', text: '오픈소스 공개 전에만 보안 검토가 필요하다' },
+      { id: 'C', text: '보안 취약점, 성능, 유지보수성을 검토하고 필요 시 코드 리뷰를 거친다' },
+      { id: 'D', text: '개인 프로젝트에는 보안 검토가 불필요하다' },
+    ],
+    answer: 'C',
+    explanation: 'AI 생성 코드도 SQL 인젝션, XSS 등 보안 취약점이 포함될 수 있고, 비효율적인 로직이 포함될 수 있습니다. 실무 투입 전 코드 리뷰와 보안 검토는 필수입니다.',
+  },
+  {
+    id: 8, level: 'advanced',
+    question: 'AI와의 반복적인 대화로 코드를 개선하는 올바른 접근 방식은?',
+    options: [
+      { id: 'A', text: '한 번의 프롬프트에 모든 기능을 구현해달라고 요청한다' },
+      { id: 'B', text: 'AI의 첫 번째 결과물은 항상 최선이므로 그대로 수락한다' },
+      { id: 'C', text: '단계적으로 기능을 추가하고 각 단계마다 검토·피드백을 제공한다' },
+      { id: 'D', text: '결과가 마음에 들지 않으면 무조건 AI 모델을 교체한다' },
+    ],
+    answer: 'C',
+    explanation: '바이브코딩의 강점은 반복적 개선입니다. 한 번에 완성하려 하기보다 작은 단위로 기능을 추가하고 검토·피드백하며 완성도를 높이는 것이 효과적입니다.',
+  },
+  {
+    id: 9, level: 'advanced',
+    question: 'Next.js 프로젝트 개발환경에서 Node.js 버전을 체계적으로 관리하려면?',
+    options: [
+      { id: 'A', text: 'pip를 사용해 원하는 버전을 설치한다' },
+      { id: 'B', text: 'conda 가상환경을 생성해 관리한다' },
+      { id: 'C', text: 'nvm(Node Version Manager)으로 버전별 전환이 가능하게 설정한다' },
+      { id: 'D', text: 'Node.js는 버전 관리 없이 최신 버전만 사용하면 된다' },
+    ],
+    answer: 'C',
+    explanation: 'nvm은 여러 Node.js 버전을 설치하고 프로젝트별로 전환할 수 있는 도구입니다. .nvmrc 파일로 프로젝트별 버전을 고정해 팀원 간 환경 차이를 방지할 수 있습니다.',
+  },
+  {
+    id: 10, level: 'advanced',
+    question: 'AI 바이브코딩 마스터가 갖춰야 할 핵심 역량으로 가장 적절한 것은?',
+    options: [
+      { id: 'A', text: '모든 프로그래밍 언어의 문법을 완벽히 암기하는 능력' },
+      { id: 'B', text: 'AI 결과를 검증하고 개선 방향을 지시하는 비판적 사고와 도메인 지식' },
+      { id: 'C', text: 'AI 없이 전통적인 방식으로도 모든 코드를 작성할 수 있는 능력' },
+      { id: 'D', text: '최대한 많은 AI 도구를 동시에 사용하는 멀티태스킹 능력' },
+    ],
+    answer: 'B',
+    explanation: 'AI 바이브코딩 마스터는 코드를 직접 작성하는 능력보다 AI 결과물을 평가하고 더 나은 방향으로 이끄는 능력이 중요합니다. 도메인 지식과 비판적 사고가 AI 활용의 품질을 결정합니다.',
   },
 ]

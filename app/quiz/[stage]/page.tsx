@@ -3,13 +3,13 @@
 import { useParams, useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { BEGINNER_QUESTIONS, INTERMEDIATE_QUESTIONS, DiagnosticQuestion } from '@/lib/content'
+import { BEGINNER_QUESTIONS, INTERMEDIATE_QUESTIONS, ADVANCED_QUESTIONS, DiagnosticQuestion } from '@/lib/content'
 import { useAuth } from '@/contexts/AuthContext'
 import { saveQuizResult } from '@/lib/actions/quiz'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
-type Stage  = 'beginner' | 'intermediate'
+type Stage  = 'beginner' | 'intermediate' | 'advanced'
 type Answer = 'A' | 'B' | 'C' | 'D'
 type Screen = 'quiz' | 'result' | 'locked'
 
@@ -23,6 +23,40 @@ interface QuizState {
 const PASSING_SCORE  = 70
 const RETRY_THRESHOLD = 49
 
+const STAGE_CONFIG: Record<Stage, {
+  label: string
+  questions: DiagnosticQuestion[]
+  clearedKey: string
+  requiredKey: string | null
+  nextStage: Stage | null
+  pendingLevelUpValue: string
+}> = {
+  beginner: {
+    label: '초급',
+    questions: BEGINNER_QUESTIONS,
+    clearedKey: 'beginnerCleared',
+    requiredKey: null,
+    nextStage: 'intermediate',
+    pendingLevelUpValue: 'intermediate',
+  },
+  intermediate: {
+    label: '중급',
+    questions: INTERMEDIATE_QUESTIONS,
+    clearedKey: 'intermediateCleared',
+    requiredKey: 'beginnerCleared',
+    nextStage: 'advanced',
+    pendingLevelUpValue: 'advanced',
+  },
+  advanced: {
+    label: '고급',
+    questions: ADVANCED_QUESTIONS,
+    clearedKey: 'advancedCleared',
+    requiredKey: 'intermediateCleared',
+    nextStage: null,
+    pendingLevelUpValue: 'complete',
+  },
+}
+
 // ── Utils ──────────────────────────────────────────────────────────────────
 
 function calcScore(answers: Answer[], questions: DiagnosticQuestion[]): number {
@@ -34,6 +68,24 @@ function getGrade(score: number) {
   if (score >= 70) return { grade: '양호', message: '잘 하고 있습니다!',     cls: 'border-blue-200 bg-blue-50 text-blue-700'   }
   if (score >= 50) return { grade: '보통', message: '더 학습이 필요합니다.', cls: 'border-yellow-200 bg-yellow-50 text-yellow-700' }
   return              { grade: '부족', message: '추가 학습을 권장합니다.',  cls: 'border-red-200 bg-red-50 text-red-600'      }
+}
+
+interface LectureRec { label: string; href: string }
+
+function getLectureRec(stage: Stage, passed: boolean): LectureRec {
+  if (stage === 'beginner') {
+    return passed
+      ? { label: '다음 단계: 중급 강의 6~10강 보기 →', href: '/lecture/6' }
+      : { label: '보충 학습: 기초 강의 1~5강 복습하기 →', href: '/lecture/1' }
+  }
+  if (stage === 'intermediate') {
+    return passed
+      ? { label: '다음 단계: 바이브코딩 입문 11강 보기 →', href: '/lecture/11' }
+      : { label: '보충 학습: 실무 강의 6~10강 복습하기 →', href: '/lecture/6' }
+  }
+  return passed
+    ? { label: '전 과정 완료! 홈으로 돌아가기 →', href: '/' }
+    : { label: '보충 학습: 고급 강의 11~15강 복습하기 →', href: '/lecture/11' }
 }
 
 // ── Internal components ────────────────────────────────────────────────────
@@ -74,17 +126,17 @@ function OptionButton({ id, text, selected, onSelect }: {
   )
 }
 
-function ResultScreen({ stage, questions, answers, score, onRetry, onNextStage, onHome }: {
+function ResultScreen({ stage, questions, answers, score, onRetry, onHome }: {
   stage: Stage
   questions: DiagnosticQuestion[]
   answers: Answer[]
   score: number
   onRetry: () => void
-  onNextStage: () => void
   onHome: () => void
 }) {
   const { grade, message, cls } = getGrade(score)
-  const showNextStage = stage === 'beginner' && score >= PASSING_SCORE
+  const passed = score >= PASSING_SCORE
+  const rec = getLectureRec(stage, passed)
 
   return (
     <div>
@@ -94,6 +146,16 @@ function ResultScreen({ stage, questions, answers, score, onRetry, onNextStage, 
           {grade}
         </span>
         <p className="mt-2 text-sm text-notion-secondary">{message}</p>
+      </div>
+
+      {/* 강의 추천 */}
+      <div className={`mb-6 p-4 rounded-lg border ${passed ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
+        <p className="text-xs font-semibold mb-1 text-notion-text">
+          {passed ? '다음 학습 경로' : '보충 학습 권장'}
+        </p>
+        <a href={rec.href} className="text-sm text-notion-accent hover:underline font-medium">
+          {rec.label}
+        </a>
       </div>
 
       <div className="flex flex-col gap-2 mb-8">
@@ -107,19 +169,11 @@ function ResultScreen({ stage, questions, answers, score, onRetry, onNextStage, 
         >
           다시 도전하기
         </button>
-        {showNextStage && (
-          <button
-            onClick={onNextStage}
-            className="w-full py-2.5 text-sm font-medium rounded-lg bg-notion-accent text-white hover:bg-red-600 transition-colors"
-          >
-            중급 도전하기
-          </button>
-        )}
         <button
           onClick={onHome}
           className="w-full py-2.5 text-sm font-medium rounded-lg text-notion-secondary hover:text-notion-text hover:bg-notion-surface transition-colors"
         >
-          처음으로
+          {passed ? '홈으로 (팝업 확인)' : '처음으로'}
         </button>
       </div>
 
@@ -158,14 +212,14 @@ export default function QuizPage() {
   const params  = useParams()
   const router  = useRouter()
   const { user, loading } = useAuth()
-  const stage   = params.stage as string
+  const stageParam = params.stage as string
 
-  const isValid    = stage === 'beginner' || stage === 'intermediate'
-  const questions  = stage === 'beginner' ? BEGINNER_QUESTIONS : INTERMEDIATE_QUESTIONS
-  const stageLabel = stage === 'beginner' ? '초급' : '중급'
+  const isValid = stageParam === 'beginner' || stageParam === 'intermediate' || stageParam === 'advanced'
+  const stage   = stageParam as Stage
+  const config  = isValid ? STAGE_CONFIG[stage] : STAGE_CONFIG.beginner
 
   const [state, setState] = useState<QuizState>({
-    screen: stage === 'intermediate' ? 'locked' : 'quiz',
+    screen: 'quiz',
     currentIndex: 0,
     selectedAnswer: null,
     answers: [],
@@ -174,14 +228,14 @@ export default function QuizPage() {
   useEffect(() => {
     if (!loading && !user) { router.replace('/login'); return }
     if (!isValid) { router.replace('/'); return }
-    if (stage === 'intermediate') {
-      if (localStorage.getItem('beginnerCleared') === 'true') {
-        setState((s) => ({ ...s, screen: 'quiz' }))
-      }
+    if (config.requiredKey && localStorage.getItem(config.requiredKey) !== 'true') {
+      setState((s) => ({ ...s, screen: 'locked' }))
     }
-  }, [stage, isValid, router])
+  }, [stage, isValid, loading, user])
 
   if (loading || !user || !isValid) return null
+
+  const { questions, label } = config
 
   const selectAnswer = (answer: Answer) => {
     setState((s) => ({ ...s, selectedAnswer: answer }))
@@ -191,19 +245,20 @@ export default function QuizPage() {
     setState((s) => {
       if (!s.selectedAnswer) return s
       const newAnswers = [...s.answers, s.selectedAnswer]
-      if (s.currentIndex < 9) {
+      if (s.currentIndex < questions.length - 1) {
         return { ...s, answers: newAnswers, currentIndex: s.currentIndex + 1, selectedAnswer: null }
       }
       const score = newAnswers.filter((a, i) => a === questions[i].answer).length * 10
       const passed = score >= PASSING_SCORE
-      if (stage === 'beginner' && passed) {
-        localStorage.setItem('beginnerCleared', 'true')
+      if (passed) {
+        localStorage.setItem(config.clearedKey, 'true')
+        localStorage.setItem('pendingLevelUp', config.pendingLevelUpValue)
       }
       if (user) {
         saveQuizResult({
           user_email: user.email,
           user_name: user.name,
-          stage: stage as 'beginner' | 'intermediate',
+          stage,
           score,
           passed,
         }).catch(console.error)
@@ -219,21 +274,23 @@ export default function QuizPage() {
   const score = state.screen === 'result' ? calcScore(state.answers, questions) : 0
   const q     = questions[state.currentIndex]
 
+  const lockedBy = stage === 'intermediate' ? '초급' : '중급'
+
   return (
     <div className="min-h-screen bg-notion-bg">
       {/* Top bar */}
       <div className="sticky top-0 z-50 bg-notion-bg/95 backdrop-blur-sm border-b border-notion-border">
         <div className="max-w-notion mx-auto px-6 h-12 flex items-center justify-between">
           <Link
-            href="/#quiz"
+            href="/"
             className="flex items-center gap-1.5 text-xs text-notion-secondary hover:text-notion-text transition-colors"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            진단 홈
+            AI 교육
           </Link>
-          <span className="text-xs font-medium text-notion-secondary">{stageLabel} 진단</span>
+          <span className="text-xs font-medium text-notion-secondary">{label} 진단</span>
           {state.screen === 'quiz' && (
             <span className="text-xs text-notion-secondary">
               {state.currentIndex + 1} / {questions.length}
@@ -250,16 +307,16 @@ export default function QuizPage() {
           <div className="text-center py-20">
             <div className="text-4xl mb-4">🔒</div>
             <h2 className="font-serif text-xl font-semibold text-notion-text mb-2">
-              초급을 먼저 통과해주세요
+              {lockedBy}을 먼저 통과해주세요
             </h2>
             <p className="text-sm text-notion-secondary mb-6">
-              초급에서 70점 이상을 받으면 중급이 해금됩니다
+              {lockedBy}에서 70점 이상을 받으면 {label}이 해금됩니다
             </p>
             <Link
-              href="/quiz/beginner"
+              href={`/quiz/${stage === 'intermediate' ? 'beginner' : 'intermediate'}`}
               className="inline-block px-5 py-2.5 bg-notion-accent text-white text-sm font-medium rounded-lg hover:bg-red-600 transition-colors"
             >
-              초급 도전하기
+              {lockedBy} 도전하기
             </Link>
           </div>
         )}
@@ -269,7 +326,7 @@ export default function QuizPage() {
           <div>
             <div className="mb-8">
               <h1 className="font-serif text-xl font-semibold text-notion-text mb-4">
-                {stageLabel} 진단
+                {label} 진단
               </h1>
               <ProgressBar current={state.currentIndex + 1} total={questions.length} />
             </div>
@@ -296,7 +353,7 @@ export default function QuizPage() {
                 disabled={state.selectedAnswer === null}
                 className="flex items-center gap-1.5 px-5 py-2.5 bg-notion-accent text-white text-sm font-medium rounded-lg hover:bg-red-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >
-                {state.currentIndex < 9 ? '다음' : '결과 보기'}
+                {state.currentIndex < questions.length - 1 ? '다음' : '결과 보기'}
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
@@ -308,12 +365,11 @@ export default function QuizPage() {
         {/* Result */}
         {state.screen === 'result' && (
           <ResultScreen
-            stage={stage as Stage}
+            stage={stage}
             questions={questions}
             answers={state.answers}
             score={score}
             onRetry={retryQuiz}
-            onNextStage={() => router.push('/quiz/intermediate')}
             onHome={() => router.push('/')}
           />
         )}

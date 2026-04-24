@@ -5,7 +5,7 @@ import { createServerClient } from '@/lib/supabase-server'
 interface SaveQuizResultInput {
   user_email: string
   user_name: string
-  stage: 'beginner' | 'intermediate'
+  stage: 'beginner' | 'intermediate' | 'advanced'
   score: number
   passed: boolean
 }

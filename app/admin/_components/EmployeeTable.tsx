@@ -31,7 +31,12 @@ interface EmployeeSummary {
   history: QuizResult[]
 }
 
-function StatusBadge({ status }: { status: StageStatus | null }) {
+function getBestScore(history: QuizResult[], stage: 'beginner' | 'intermediate'): number | undefined {
+  const scores = history.filter((r) => r.stage === stage).map((r) => r.score)
+  return scores.length > 0 ? Math.max(...scores) : undefined
+}
+
+function StatusBadge({ status, bestScore }: { status: StageStatus | null; bestScore?: number }) {
   if (!status) {
     return <span className="text-xs text-notion-secondary">미응시</span>
   }
@@ -39,12 +44,18 @@ function StatusBadge({ status }: { status: StageStatus | null }) {
     return (
       <span className="text-xs text-green-600 font-medium">
         통과 ({status.passedAttempt}차)
+        {bestScore !== undefined && (
+          <span className="text-notion-secondary font-normal"> · {bestScore}점</span>
+        )}
       </span>
     )
   }
   return (
     <span className="text-xs text-red-500">
-      미통과 ({status.attempts}회 시도)
+      미통과 ({status.attempts}회)
+      {bestScore !== undefined && (
+        <span className="text-notion-secondary font-normal"> · 최고 {bestScore}점</span>
+      )}
     </span>
   )
 }
@@ -108,8 +119,8 @@ export default function EmployeeTable({ summary }: { summary: EmployeeSummary[] 
                 {emp.name}
               </span>
               <span className="text-sm text-notion-secondary">{emp.company}</span>
-              <StatusBadge status={emp.beginner} />
-              <StatusBadge status={emp.intermediate} />
+              <StatusBadge status={emp.beginner} bestScore={getBestScore(emp.history, 'beginner')} />
+              <StatusBadge status={emp.intermediate} bestScore={getBestScore(emp.history, 'intermediate')} />
               <span className="text-xs text-notion-secondary">
                 {emp.lastActivity ? formatDate(emp.lastActivity) : '—'}
               </span>

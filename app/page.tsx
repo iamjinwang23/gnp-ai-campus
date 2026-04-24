@@ -4,15 +4,14 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import Header, { TabType } from '@/components/Header'
-import LectureSection from '@/components/LectureSection'
-import QuizSection from '@/components/QuizSection'
+import EducationSection from '@/components/EducationSection'
 import QnASection from '@/components/QnASection'
-import { LECTURES, QNA_ITEMS } from '@/lib/content'
+import { QNA_ITEMS } from '@/lib/content'
 
 export default function Home() {
   const { user, loading } = useAuth()
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<TabType>('lectures')
+  const [activeTab, setActiveTab] = useState<TabType>('education')
 
   useEffect(() => {
     if (!loading && !user) router.replace('/login')
@@ -22,7 +21,7 @@ export default function Home() {
 
   const handleTabChange = (tab: TabType) => {
     setActiveTab(tab)
-    const sectionId = tab === 'lectures' ? 'lectures' : tab === 'quiz' ? 'quiz' : 'qna'
+    const sectionId = tab === 'education' ? 'education' : 'qna'
     setTimeout(() => {
       document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }, 0)
@@ -43,13 +42,7 @@ export default function Home() {
         <div className="mt-6 md:mt-8 h-px bg-notion-border" />
       </section>
 
-      <LectureSection lectures={LECTURES} />
-
-      <div className="max-w-notion mx-auto px-6">
-        <div className="h-px bg-notion-border" />
-      </div>
-
-      <QuizSection />
+      <EducationSection />
 
       <div className="max-w-notion mx-auto px-6">
         <div className="h-px bg-notion-border" />
