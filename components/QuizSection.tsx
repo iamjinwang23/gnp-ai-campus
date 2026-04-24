@@ -22,7 +22,7 @@ export default function QuizSection({ stage, isVisible, isCleared }: QuizSection
 
   if (!isVisible) {
     return (
-      <div className="max-w-notion mx-auto px-6 pb-10">
+      <div className="pb-4">
         <div className="flex items-center gap-3 p-4 rounded-xl border border-dashed border-notion-border text-notion-secondary text-sm">
           <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -35,7 +35,7 @@ export default function QuizSection({ stage, isVisible, isCleared }: QuizSection
   }
 
   return (
-    <div className="max-w-notion mx-auto px-6 pb-10">
+    <div className="pb-4">
       <div className={`bg-white border rounded-xl p-6 transition-all ${
         isCleared ? 'border-green-300 bg-green-50/30' : 'border-notion-accent/40 shadow-sm'
       }`}>

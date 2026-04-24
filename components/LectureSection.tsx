@@ -25,7 +25,7 @@ export default function LectureSection({ lectures, readIds = [], onRead }: Lectu
   const readCount = lectures.filter((l) => readIds.includes(l.id)).length
 
   return (
-    <section id="lectures" className="max-w-notion mx-auto px-6 py-12">
+    <div className="mb-8">
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <h2 className="font-serif text-2xl font-semibold text-notion-text">강의목록</h2>
@@ -109,6 +109,6 @@ export default function LectureSection({ lectures, readIds = [], onRead }: Lectu
           )
         })}
       </div>
-    </section>
+    </div>
   )
 }

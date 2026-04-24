@@ -9,7 +9,7 @@ interface QuizResult {
   id: number
   user_email: string
   user_name: string
-  stage: 'beginner' | 'intermediate'
+  stage: 'beginner' | 'intermediate' | 'advanced'
   attempt_number: number
   score: number
   passed: boolean
@@ -52,13 +52,15 @@ export default async function AdminPage() {
       ...emp,
       beginner: getStageStatus(userResults, 'beginner'),
       intermediate: getStageStatus(userResults, 'intermediate'),
+      advanced: getStageStatus(userResults, 'advanced'),
       lastActivity: sorted[0]?.created_at ?? null,
       history: sorted,
     }
   })
 
-  const beginnerPassed = summary.filter((e) => e.beginner?.passed).length
+  const beginnerPassed    = summary.filter((e) => e.beginner?.passed).length
   const intermediatePassed = summary.filter((e) => e.intermediate?.passed).length
+  const advancedPassed    = summary.filter((e) => e.advanced?.passed).length
 
   return (
     <AdminGuard>
@@ -79,7 +81,7 @@ export default async function AdminPage() {
           <p className="text-sm text-notion-secondary mb-6">전체 {employees.length}명 · 이름을 클릭하면 상세 이력을 볼 수 있습니다</p>
 
           {/* Summary cards */}
-          <div className="grid grid-cols-3 gap-3 mb-8">
+          <div className="grid grid-cols-4 gap-3 mb-8">
             <div className="bg-white border border-notion-border rounded-xl p-4">
               <p className="text-xs text-notion-secondary mb-1">전체 직원</p>
               <p className="text-2xl font-bold text-notion-text">{employees.length}명</p>
@@ -99,6 +101,15 @@ export default async function AdminPage() {
                 {intermediatePassed}명
                 <span className="text-sm font-normal text-notion-secondary ml-1">
                   ({Math.round((intermediatePassed / employees.length) * 100)}%)
+                </span>
+              </p>
+            </div>
+            <div className="bg-white border border-notion-border rounded-xl p-4">
+              <p className="text-xs text-notion-secondary mb-1">고급 통과</p>
+              <p className="text-2xl font-bold text-notion-text">
+                {advancedPassed}명
+                <span className="text-sm font-normal text-notion-secondary ml-1">
+                  ({Math.round((advancedPassed / employees.length) * 100)}%)
                 </span>
               </p>
             </div>

@@ -14,7 +14,7 @@ interface QuizResult {
   id: number
   user_email: string
   user_name: string
-  stage: 'beginner' | 'intermediate'
+  stage: 'beginner' | 'intermediate' | 'advanced'
   attempt_number: number
   score: number
   passed: boolean
@@ -27,11 +27,18 @@ interface EmployeeSummary {
   company: string
   beginner: StageStatus | null
   intermediate: StageStatus | null
+  advanced: StageStatus | null
   lastActivity: string | null
   history: QuizResult[]
 }
 
-function getBestScore(history: QuizResult[], stage: 'beginner' | 'intermediate'): number | undefined {
+const STAGE_LABEL: Record<'beginner' | 'intermediate' | 'advanced', string> = {
+  beginner: '초급',
+  intermediate: '중급',
+  advanced: '고급',
+}
+
+function getBestScore(history: QuizResult[], stage: 'beginner' | 'intermediate' | 'advanced'): number | undefined {
   const scores = history.filter((r) => r.stage === stage).map((r) => r.score)
   return scores.length > 0 ? Math.max(...scores) : undefined
 }
@@ -94,11 +101,12 @@ export default function EmployeeTable({ summary }: { summary: EmployeeSummary[] 
 
       <div className="bg-white border border-notion-border rounded-xl overflow-hidden">
         {/* Table header */}
-        <div className="grid grid-cols-[2fr_2fr_2fr_2fr_1.5fr] gap-0 border-b border-notion-border bg-notion-surface px-4 py-2.5">
+        <div className="grid grid-cols-[2fr_2fr_2fr_2fr_2fr_1.5fr] gap-0 border-b border-notion-border bg-notion-surface px-4 py-2.5">
           <span className="text-xs font-semibold text-notion-secondary">이름</span>
           <span className="text-xs font-semibold text-notion-secondary">소속</span>
           <span className="text-xs font-semibold text-notion-secondary">초급 진단</span>
           <span className="text-xs font-semibold text-notion-secondary">중급 진단</span>
+          <span className="text-xs font-semibold text-notion-secondary">고급 진단</span>
           <span className="text-xs font-semibold text-notion-secondary">최근 응시</span>
         </div>
 
@@ -107,7 +115,7 @@ export default function EmployeeTable({ summary }: { summary: EmployeeSummary[] 
           <div key={emp.email}>
             <button
               onClick={() => setSelectedEmail(selectedEmail === emp.email ? null : emp.email)}
-              className="w-full grid grid-cols-[2fr_2fr_2fr_2fr_1.5fr] gap-0 px-4 py-3 border-b border-notion-border hover:bg-notion-surface/50 transition-colors text-left"
+              className="w-full grid grid-cols-[2fr_2fr_2fr_2fr_2fr_1.5fr] gap-0 px-4 py-3 border-b border-notion-border hover:bg-notion-surface/50 transition-colors text-left"
             >
               <span className="text-sm font-medium text-notion-text flex items-center gap-1.5">
                 <svg
@@ -119,8 +127,9 @@ export default function EmployeeTable({ summary }: { summary: EmployeeSummary[] 
                 {emp.name}
               </span>
               <span className="text-sm text-notion-secondary">{emp.company}</span>
-              <StatusBadge status={emp.beginner} bestScore={getBestScore(emp.history, 'beginner')} />
+              <StatusBadge status={emp.beginner}    bestScore={getBestScore(emp.history, 'beginner')} />
               <StatusBadge status={emp.intermediate} bestScore={getBestScore(emp.history, 'intermediate')} />
+              <StatusBadge status={emp.advanced}    bestScore={getBestScore(emp.history, 'advanced')} />
               <span className="text-xs text-notion-secondary">
                 {emp.lastActivity ? formatDate(emp.lastActivity) : '—'}
               </span>
@@ -145,7 +154,7 @@ export default function EmployeeTable({ summary }: { summary: EmployeeSummary[] 
                       {emp.history.map((r) => (
                         <div key={r.id} className="grid grid-cols-[2fr_1.5fr_1fr_1fr_1fr] gap-0 px-3 py-2 border-b border-notion-border last:border-0 bg-white">
                           <span className="text-xs text-notion-secondary">{formatDateTime(r.created_at)}</span>
-                          <span className="text-xs text-notion-text">{r.stage === 'beginner' ? '초급' : '중급'}</span>
+                          <span className="text-xs text-notion-text">{STAGE_LABEL[r.stage]}</span>
                           <span className="text-xs text-notion-text">{r.attempt_number}차</span>
                           <span className="text-xs text-notion-text font-medium">{r.score}점</span>
                           <span className={`text-xs font-medium ${r.passed ? 'text-green-600' : 'text-red-500'}`}>
