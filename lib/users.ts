@@ -25,6 +25,7 @@ const USERS: (User & { password: string })[] = [
   { name: '장훈',    email: 'devotion96@hanmail.net',   company: '지앤파트너', password: '1234' },
   { name: '조제이',  email: 'jjo8247@naver.com',        company: '지앤파트너', password: '1234' },
   { name: '허수빈',  email: 'rsb0428@g-insu.com',       company: '지앤파트너', password: '1234' },
+  { name: '박정영',  email: 'jypark@g-insu.com',        company: '지앤파트너', password: '1234' },
   { name: '박시내',  email: 'snpark@g-insu.com',        company: '지앤파트너', password: '1234' },
   { name: '강윤정',  email: 'kyj12@g-insu.com',         company: '지앤파트너', password: '1234' },
   { name: '구교은',  email: 'gyoeun0401@g-insu.com',    company: '지앤파트너', password: '1234' },

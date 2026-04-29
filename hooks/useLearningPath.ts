@@ -40,6 +40,7 @@ export const LEVELS: Level[] = ['beginner', 'intermediate', 'advanced']
 
 export interface PendingModal {
   type: 'level-complete' | 'course-complete'
+  currentLabel?: string
   nextLevel?: Level
   nextLabel?: string
 }
@@ -115,8 +116,10 @@ export function useLearningPath(): UseLearningPathReturn {
         setActiveLevelState('advanced')
       } else {
         const nextLevel = pending as Level
+        const completedLevel = LEVELS.find((l) => LEVEL_CONFIG[l].nextLevel === nextLevel)
         setPendingModal({
           type: 'level-complete',
+          currentLabel: completedLevel ? LEVEL_CONFIG[completedLevel].label : '',
           nextLevel,
           nextLabel: LEVEL_CONFIG[nextLevel].label,
         })

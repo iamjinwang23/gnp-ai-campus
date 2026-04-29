@@ -43,7 +43,7 @@ export default function CompletionModal({ modal, onNext, onDismiss }: Completion
         <div className="text-5xl mb-4">{isFinal ? '🎉' : '✅'}</div>
 
         <h2 id="modal-title" className="font-serif text-xl font-bold text-notion-text mb-2">
-          {isFinal ? '수고하셨습니다!' : `${modal.nextLevel ? '' : ''}단계 완료!`}
+          {isFinal ? '수고하셨습니다!' : `${modal.currentLabel} 단계 완료!`}
         </h2>
 
         <p className="text-sm text-notion-secondary mb-6 leading-relaxed">

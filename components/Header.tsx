@@ -5,7 +5,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 
-export type TabType = 'news' | 'education' | 'qna'
+export type TabType = 'news' | 'article' | 'education' | 'qna'
 
 interface HeaderProps {
   activeTab?: TabType
@@ -13,9 +13,10 @@ interface HeaderProps {
 }
 
 const tabs: { id: TabType; label: string }[] = [
-  { id: 'news',      label: 'AI 뉴스' },
-  { id: 'education', label: 'AI 교육' },
-  { id: 'qna',       label: 'Q&A'    },
+  { id: 'news',      label: 'AI 뉴스'   },
+  { id: 'article',   label: 'AI 아티클' },
+  { id: 'education', label: 'AI 교육'   },
+  { id: 'qna',       label: 'Q&A'       },
 ]
 
 export default function Header({ activeTab, onTabChange }: HeaderProps) {
@@ -24,7 +25,10 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
 
-  const effectiveActiveTab: TabType | undefined = pathname.startsWith('/news') ? 'news' : activeTab
+  const effectiveActiveTab: TabType | undefined =
+    pathname.startsWith('/news') ? 'news' :
+    pathname.startsWith('/article') ? 'article' :
+    activeTab
 
   const handleLogout = () => {
     logout()
@@ -33,10 +37,8 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
 
   const handleTab = (tab: TabType) => {
     setMenuOpen(false)
-    if (tab === 'news') {
-      router.push('/news')
-      return
-    }
+    if (tab === 'news') { router.push('/news'); return }
+    if (tab === 'article') { router.push('/article'); return }
     if (onTabChange) {
       onTabChange(tab)
     } else {
@@ -59,8 +61,8 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
         <nav className="hidden md:flex flex-1 items-center justify-center gap-1">
           {tabs.map((tab, i) => (
             <Fragment key={tab.id}>
-              {/* divider between AI 뉴스 and 강의목록 */}
-              {i === 1 && <div className="w-px h-4 bg-notion-border mx-1" />}
+              {/* divider before AI 교육 */}
+              {i === 2 && <div className="w-px h-4 bg-notion-border mx-1" />}
               <button
                 onClick={() => handleTab(tab.id)}
                 className={`px-3 py-1.5 text-sm rounded-md transition-colors ${
@@ -132,8 +134,8 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
           <nav className="space-y-0.5">
             {tabs.map((tab, i) => (
               <Fragment key={tab.id}>
-                {/* divider between AI 뉴스 and 강의목록 */}
-                {i === 1 && <div className="border-t border-notion-border my-1.5 mx-3" />}
+                {/* divider before AI 교육 */}
+                {i === 2 && <div className="border-t border-notion-border my-1.5 mx-3" />}
                 <button
                   onClick={() => handleTab(tab.id)}
                   className={`w-full text-left px-3 py-2.5 text-sm rounded-md transition-colors ${

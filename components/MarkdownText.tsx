@@ -3,12 +3,34 @@ interface MarkdownTextProps {
 }
 
 function processInline(str: string): React.ReactNode[] {
-  const parts = str.split(/\*\*(.*?)\*\*/g)
-  return parts.map((part, i) =>
-    i % 2 === 1
-      ? <strong key={i} className="font-semibold text-notion-text">{part}</strong>
-      : part
-  )
+  // Split on bold (**), italic (* or _), and link ([text](url))
+  const token = /(`[^`]+`|\*\*.*?\*\*|\*[^*]+\*|_[^_]+_|\[[^\]]+\]\([^)]+\))/g
+  const parts = str.split(token)
+  return parts.map((part, i) => {
+    if (/^`([^`]+)`$/.test(part)) {
+      return (
+        <code key={i} className="px-1.5 py-0.5 rounded bg-notion-text/8 text-[0.8em] font-mono text-notion-accent border border-notion-border">
+          {part.slice(1, -1)}
+        </code>
+      )
+    }
+    if (/^\*\*(.*)\*\*$/.test(part)) {
+      return <strong key={i} className="font-semibold text-notion-text">{part.slice(2, -2)}</strong>
+    }
+    if (/^\*([^*]+)\*$/.test(part) || /^_([^_]+)_$/.test(part)) {
+      return <em key={i} className="italic">{part.slice(1, -1)}</em>
+    }
+    const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
+    if (linkMatch) {
+      return (
+        <a key={i} href={linkMatch[2]} target="_blank" rel="noopener noreferrer"
+          className="text-notion-accent underline underline-offset-2 hover:opacity-80">
+          {linkMatch[1]}
+        </a>
+      )
+    }
+    return part
+  })
 }
 
 function TableBlock({ block }: { block: string }) {
@@ -54,13 +76,38 @@ export default function MarkdownText({ text }: MarkdownTextProps) {
   return (
     <div className="space-y-3">
       {text.split('\n\n').map((block, i) => {
+        // Headings
+        if (block.startsWith('### ')) {
+          return <h3 key={i} className="font-serif text-base font-bold text-notion-text mt-1">{processInline(block.slice(4))}</h3>
+        }
+        if (block.startsWith('## ')) {
+          return <h2 key={i} className="font-serif text-lg font-bold text-notion-text mt-1">{processInline(block.slice(3))}</h2>
+        }
+        if (block.startsWith('# ')) {
+          return <h1 key={i} className="font-serif text-xl font-bold text-notion-text mt-1">{processInline(block.slice(2))}</h1>
+        }
+
+        // Horizontal rule
+        if (/^---+$/.test(block.trim())) {
+          return <hr key={i} className="border-notion-border" />
+        }
+
         // Code block
         if (block.startsWith('```')) {
-          const code = block.replace(/^```[a-z]*\n?/, '').replace(/```$/, '')
+          const langMatch = block.match(/^```([a-z]*)/)
+          const lang = langMatch?.[1] || ''
+          const code = block.replace(/^```[a-z]*\n?/, '').replace(/\n?```$/, '')
           return (
-            <pre key={i} className="bg-notion-text/5 rounded-md p-3 text-xs overflow-x-auto font-mono text-notion-text leading-relaxed">
-              {code}
-            </pre>
+            <div key={i} className="rounded-lg overflow-hidden border border-notion-border text-xs">
+              {lang && (
+                <div className="px-3 py-1.5 bg-notion-text/5 border-b border-notion-border font-mono text-notion-secondary">
+                  {lang}
+                </div>
+              )}
+              <pre className="bg-[#1e1e1e] text-[#d4d4d4] p-4 overflow-x-auto font-mono leading-relaxed">
+                {code}
+              </pre>
+            </div>
           )
         }
 
