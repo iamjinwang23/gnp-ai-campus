@@ -2,6 +2,8 @@
 
 import { createServerClient } from '@/lib/supabase-server'
 
+export type ArticleCategory = '정보' | '사례'
+
 export interface ArticlePost {
   id: string
   title: string
@@ -13,6 +15,7 @@ export interface ArticlePost {
   author_email: string
   view_count: number
   created_at: string
+  category: ArticleCategory
 }
 
 export interface CreateArticleInput {
@@ -23,6 +26,7 @@ export interface CreateArticleInput {
   thumbnail_url?: string
   author_name: string
   author_email: string
+  category: ArticleCategory
 }
 
 export async function getArticles(): Promise<ArticlePost[]> {
@@ -65,6 +69,7 @@ export async function createArticle(input: CreateArticleInput): Promise<ArticleP
       thumbnail_url: input.thumbnail_url || null,
       author_name: input.author_name,
       author_email: input.author_email,
+      category: input.category,
     })
     .select()
     .single()
@@ -84,6 +89,7 @@ export async function updateArticle(
       url: input.url || null,
       body: input.body || null,
       thumbnail_url: input.thumbnail_url || null,
+      category: input.category,
     })
     .eq('id', id)
     .select()

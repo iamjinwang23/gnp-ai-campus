@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useAuth } from '@/contexts/AuthContext'
 import Header from '@/components/Header'
 import ArticleUploadModal from '@/components/ArticleUploadModal'
-import { ArticlePost } from '@/lib/actions/article'
+import { ArticlePost, ArticleCategory } from '@/lib/actions/article'
 
 function timeAgo(dateStr: string): string {
   const diff = Date.now() - new Date(dateStr).getTime()
@@ -28,6 +28,11 @@ export default function ArticleListClient({ initialArticles }: Props) {
   const router = useRouter()
   const [articles, setArticles] = useState<ArticlePost[]>(initialArticles)
   const [modalOpen, setModalOpen] = useState(false)
+  const [activeCategory, setActiveCategory] = useState<'전체' | ArticleCategory>('전체')
+
+  const filteredArticles = activeCategory === '전체'
+    ? articles
+    : articles.filter((a) => a.category === activeCategory)
 
   useEffect(() => {
     if (!loading && !user) router.replace('/login')
@@ -65,14 +70,31 @@ export default function ArticleListClient({ initialArticles }: Props) {
 
         <div className="h-px bg-notion-border mb-4" />
 
+        {/* Category chips */}
+        <div className="flex gap-2 mb-5">
+          {(['전체', '정보', '사례'] as const).map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className={`px-3.5 py-1.5 text-sm rounded-full border transition-colors ${
+                activeCategory === cat
+                  ? 'bg-notion-accent text-white border-notion-accent'
+                  : 'border-notion-border text-notion-secondary hover:border-notion-accent hover:text-notion-accent'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
         {/* Article list */}
-        {articles.length === 0 ? (
+        {filteredArticles.length === 0 ? (
           <p className="text-center text-notion-secondary py-20 text-sm">
             아직 등록된 아티클이 없습니다.
           </p>
         ) : (
           <ul className="divide-y divide-notion-border">
-            {articles.map((article) => (
+            {filteredArticles.map((article) => (
               <li key={article.id}>
                 <Link
                   href={`/article/${article.id}`}
@@ -99,6 +121,11 @@ export default function ArticleListClient({ initialArticles }: Props) {
 
                   {/* Text */}
                   <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <span className="inline-block px-2 py-0.5 text-[10px] font-medium rounded-full bg-red-50 text-notion-accent border border-red-100">
+                        {article.category}
+                      </span>
+                    </div>
                     <p className="text-sm font-semibold text-notion-text truncate leading-snug">
                       {article.title}
                     </p>

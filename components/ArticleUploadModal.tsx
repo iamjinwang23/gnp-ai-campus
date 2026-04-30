@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { createArticle, updateArticle, uploadArticleImage, ArticlePost } from '@/lib/actions/article'
+import { createArticle, updateArticle, uploadArticleImage, ArticlePost, ArticleCategory } from '@/lib/actions/article'
 import { User } from '@/lib/users'
 
 interface Props {
@@ -18,6 +18,7 @@ export default function ArticleUploadModal({ user, article, onClose, onSuccess }
   const [description, setDescription] = useState(article?.description ?? '')
   const [url, setUrl] = useState(article?.url ?? '')
   const [body, setBody] = useState(article?.body ?? '')
+  const [category, setCategory] = useState<ArticleCategory>(article?.category ?? '정보')
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(article?.thumbnail_url ?? null)
   const [submitting, setSubmitting] = useState(false)
@@ -73,6 +74,7 @@ export default function ArticleUploadModal({ user, article, onClose, onSuccess }
           url: url.trim() || undefined,
           body: body.trim() || undefined,
           thumbnail_url: thumbnailUrl ?? undefined,
+          category,
         })
       } else {
         result = await createArticle({
@@ -83,6 +85,7 @@ export default function ArticleUploadModal({ user, article, onClose, onSuccess }
           thumbnail_url: thumbnailUrl ?? undefined,
           author_name: user.name,
           author_email: user.email,
+          category,
         })
       }
 
@@ -115,6 +118,29 @@ export default function ArticleUploadModal({ user, article, onClose, onSuccess }
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          {/* Category */}
+          <div>
+            <label className="block text-xs font-medium text-notion-text mb-1.5">
+              카테고리 <span className="text-notion-accent">*</span>
+            </label>
+            <div className="flex gap-2">
+              {(['정보', '사례'] as ArticleCategory[]).map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => setCategory(cat)}
+                  className={`px-3.5 py-1.5 text-sm rounded-full border transition-colors ${
+                    category === cat
+                      ? 'bg-notion-accent text-white border-notion-accent'
+                      : 'border-notion-border text-notion-secondary hover:border-notion-accent hover:text-notion-accent'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Title */}
           <div>
             <label className="block text-xs font-medium text-notion-text mb-1">

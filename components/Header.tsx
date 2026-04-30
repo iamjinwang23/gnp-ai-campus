@@ -50,12 +50,14 @@ export default function Header({ activeTab, onTabChange }: HeaderProps) {
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-notion-border">
       {/* ── Main bar ─────────────────────────────── */}
       <div className="px-6 md:px-8 h-14 flex items-center">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/gnp-logo.png"
-          alt="GNP AI Campus"
-          className="h-5 md:h-7 w-auto flex-none"
-        />
+        <Link href="/" onClick={() => setMenuOpen(false)}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/gnp-logo.png"
+            alt="GNP AI Campus"
+            className="h-5 md:h-7 w-auto flex-none"
+          />
+        </Link>
 
         {/* Desktop nav */}
         <nav className="hidden md:flex flex-1 items-center justify-center gap-1">
