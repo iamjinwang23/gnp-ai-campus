@@ -44,14 +44,14 @@ export default function ArticleListClient({ initialArticles }: Props) {
     <div className="min-h-screen bg-notion-bg">
       <Header />
 
-      <main className="max-w-notion mx-auto px-6 pt-10 md:pt-16 pb-16">
+      <main className="max-w-notion mx-auto px-6 pt-12 md:pt-20 pb-16">
         {/* Page header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="font-serif text-2xl md:text-3xl font-bold text-notion-text">
+            <h1 className="font-serif text-3xl md:text-5xl font-bold text-notion-text leading-tight">
               GNP AI 아티클
             </h1>
-            <p className="mt-1 text-sm text-notion-secondary">
+            <p className="mt-3 md:mt-4 text-notion-secondary text-sm md:text-base leading-relaxed max-w-lg">
               관리자가 직접 선별한 AI 아티클을 공유합니다
             </p>
           </div>
