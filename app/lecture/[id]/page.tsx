@@ -11,21 +11,21 @@ interface Props {
 }
 
 const LECTURE_HERO_IMAGES: Record<number, string> = {
-  1: '/lectures/lecture-01-generative-ai-basics.png',
-  2: '/lectures/lecture-02-ai-organization.png',
-  3: '/lectures/lecture-03-prompt-engineering-1.png',
-  4: '/lectures/lecture-04-prompt-engineering-2.png',
-  5: '/lectures/lecture-05-persona-feedback.png',
-  6: '/lectures/lecture-06-deep-research-writing.png',
-  7: '/lectures/lecture-07-ai-agent.png',
-  8: '/lectures/lecture-08-ai-work-tools.png',
-  9: '/lectures/lecture-09-ai-portfolio-project.png',
-  10: '/lectures/lecture-10-my-gpts-settings.png',
-  11: '/lectures/lecture-11-vibe-coding-intro.png',
-  12: '/lectures/lecture-12-vibe-coding-practice.png',
-  13: '/lectures/lecture-13-chatgpt-claude-coding.png',
-  14: '/lectures/lecture-14-project-completion.png',
-  15: '/lectures/lecture-15-dev-environment.png',
+  1: '/lectures/lecture-01-generative-ai-basics.webp',
+  2: '/lectures/lecture-02-ai-organization.webp',
+  3: '/lectures/lecture-03-prompt-engineering-1.webp',
+  4: '/lectures/lecture-04-prompt-engineering-2.webp',
+  5: '/lectures/lecture-05-persona-feedback.webp',
+  6: '/lectures/lecture-06-deep-research-writing.webp',
+  7: '/lectures/lecture-07-ai-agent.webp',
+  8: '/lectures/lecture-08-ai-work-tools.webp',
+  9: '/lectures/lecture-09-ai-portfolio-project.webp',
+  10: '/lectures/lecture-10-my-gpts-settings.webp',
+  11: '/lectures/lecture-11-vibe-coding-intro.webp',
+  12: '/lectures/lecture-12-vibe-coding-practice.webp',
+  13: '/lectures/lecture-13-chatgpt-claude-coding.webp',
+  14: '/lectures/lecture-14-project-completion.webp',
+  15: '/lectures/lecture-15-dev-environment.webp',
 }
 
 export function generateStaticParams() {
@@ -90,7 +90,20 @@ export default async function LecturePage({ params }: Props) {
                   <h2 className="font-serif text-base font-semibold text-notion-text">{section.title}</h2>
                 </div>
               </div>
-              <div className="px-6 py-5"><MarkdownText text={section.content} /></div>
+              <div className="px-6 py-5">
+                {section.image && (
+                  <div className="flex justify-center mb-5">
+                    <Image
+                      src={section.image}
+                      alt={section.title}
+                      width={1672}
+                      height={941}
+                      className="w-full max-w-md md:max-w-lg h-auto rounded-lg"
+                    />
+                  </div>
+                )}
+                <MarkdownText text={section.content} />
+              </div>
             </div>
           ))}
         </div>

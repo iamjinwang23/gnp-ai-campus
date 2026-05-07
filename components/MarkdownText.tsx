@@ -72,10 +72,42 @@ function TableBlock({ block }: { block: string }) {
   )
 }
 
+function splitBlocks(text: string): string[] {
+  // Tokenize code fences as atomic blocks so blank lines inside ``` ... ``` are preserved.
+  const out: string[] = []
+  const lines = text.split('\n')
+  let prose: string[] = []
+  let i = 0
+  const flushProse = () => {
+    if (!prose.length) return
+    const joined = prose.join('\n').replace(/^\n+|\n+$/g, '')
+    if (joined) out.push(...joined.split(/\n{2,}/))
+    prose = []
+  }
+  while (i < lines.length) {
+    if (lines[i].startsWith('```')) {
+      flushProse()
+      const code: string[] = [lines[i]]
+      i++
+      while (i < lines.length) {
+        code.push(lines[i])
+        if (lines[i].startsWith('```')) { i++; break }
+        i++
+      }
+      out.push(code.join('\n'))
+      continue
+    }
+    prose.push(lines[i])
+    i++
+  }
+  flushProse()
+  return out
+}
+
 export default function MarkdownText({ text }: MarkdownTextProps) {
   return (
     <div className="space-y-3">
-      {text.split('\n\n').map((block, i) => {
+      {splitBlocks(text).map((block, i) => {
         // Headings
         if (block.startsWith('### ')) {
           return <h3 key={i} className="font-serif text-base font-bold text-notion-text mt-1">{processInline(block.slice(4))}</h3>
