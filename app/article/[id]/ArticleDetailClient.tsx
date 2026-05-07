@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import Header from '@/components/Header'
 import MarkdownText from '@/components/MarkdownText'
@@ -77,12 +78,14 @@ export default function ArticleDetailClient({ article: initial }: Props) {
 
         {/* Thumbnail */}
         {article.thumbnail_url && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={article.thumbnail_url}
-            alt=""
-            className="w-full aspect-video object-cover rounded-xl mb-6"
-          />
+          <div className="relative w-full aspect-video rounded-xl overflow-hidden mb-6">
+            <Image
+              src={article.thumbnail_url}
+              alt=""
+              fill
+              className="object-cover"
+            />
+          </div>
         )}
 
         {/* Title */}

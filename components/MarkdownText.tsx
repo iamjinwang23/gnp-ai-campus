@@ -3,32 +3,28 @@ interface MarkdownTextProps {
 }
 
 function processInline(str: string): React.ReactNode[] {
-  // Split on bold (**), italic (* or _), and link ([text](url))
-  const token = /(`[^`]+`|\*\*.*?\*\*|\*[^*]+\*|_[^_]+_|\[[^\]]+\]\([^)]+\))/g
+  const token = /(`[^`]+`|\*\*\*[^*]+\*\*\*|\*\*[^*]+\*\*|~~[^~]+~~|!\[[^\]]*\]\([^)]+\)|\[[^\]]+\]\([^)]+\)|\*[^*]+\*|_[^_]+_|<u>[^<]+<\/u>)/g
   const parts = str.split(token)
   return parts.map((part, i) => {
-    if (/^`([^`]+)`$/.test(part)) {
-      return (
-        <code key={i} className="px-1.5 py-0.5 rounded bg-notion-text/8 text-[0.8em] font-mono text-notion-accent border border-notion-border">
-          {part.slice(1, -1)}
-        </code>
-      )
-    }
-    if (/^\*\*(.*)\*\*$/.test(part)) {
+    if (/^`([^`]+)`$/.test(part))
+      return <code key={i} className="px-1.5 py-0.5 rounded bg-notion-text/8 text-[0.8em] font-mono text-notion-accent border border-notion-border">{part.slice(1, -1)}</code>
+    if (/^\*\*\*([^*]+)\*\*\*$/.test(part))
+      return <strong key={i} className="font-semibold italic text-notion-text">{part.slice(3, -3)}</strong>
+    if (/^\*\*([^*]+)\*\*$/.test(part))
       return <strong key={i} className="font-semibold text-notion-text">{part.slice(2, -2)}</strong>
-    }
-    if (/^\*([^*]+)\*$/.test(part) || /^_([^_]+)_$/.test(part)) {
-      return <em key={i} className="italic">{part.slice(1, -1)}</em>
-    }
+    if (/^~~([^~]+)~~$/.test(part))
+      return <del key={i} className="text-notion-secondary">{part.slice(2, -2)}</del>
+    const imgMatch = part.match(/^!\[([^\]]*)\]\(([^)]+)\)$/)
+    if (imgMatch)
+      return <img key={i} src={imgMatch[2]} alt={imgMatch[1]} className="max-w-full rounded my-1" />
     const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
-    if (linkMatch) {
-      return (
-        <a key={i} href={linkMatch[2]} target="_blank" rel="noopener noreferrer"
-          className="text-notion-accent underline underline-offset-2 hover:opacity-80">
-          {linkMatch[1]}
-        </a>
-      )
-    }
+    if (linkMatch)
+      return <a key={i} href={linkMatch[2]} target="_blank" rel="noopener noreferrer" className="text-notion-accent underline underline-offset-2 hover:opacity-80">{linkMatch[1]}</a>
+    if (/^\*([^*]+)\*$/.test(part) || /^_([^_]+)_$/.test(part))
+      return <em key={i} className="italic">{part.slice(1, -1)}</em>
+    const uMatch = part.match(/^<u>([^<]+)<\/u>$/)
+    if (uMatch)
+      return <u key={i}>{uMatch[1]}</u>
     return part
   })
 }
@@ -109,15 +105,12 @@ export default function MarkdownText({ text }: MarkdownTextProps) {
     <div className="space-y-3">
       {splitBlocks(text).map((block, i) => {
         // Headings
-        if (block.startsWith('### ')) {
-          return <h3 key={i} className="font-serif text-base font-bold text-notion-text mt-1">{processInline(block.slice(4))}</h3>
-        }
-        if (block.startsWith('## ')) {
-          return <h2 key={i} className="font-serif text-lg font-bold text-notion-text mt-1">{processInline(block.slice(3))}</h2>
-        }
-        if (block.startsWith('# ')) {
-          return <h1 key={i} className="font-serif text-xl font-bold text-notion-text mt-1">{processInline(block.slice(2))}</h1>
-        }
+        if (block.startsWith('###### ')) return <h6 key={i} className="text-xs font-bold text-notion-text mt-1">{processInline(block.slice(7))}</h6>
+        if (block.startsWith('##### '))  return <h5 key={i} className="text-sm font-bold text-notion-text mt-1">{processInline(block.slice(6))}</h5>
+        if (block.startsWith('#### '))   return <h4 key={i} className="font-serif text-sm font-bold text-notion-text mt-1">{processInline(block.slice(5))}</h4>
+        if (block.startsWith('### '))    return <h3 key={i} className="font-serif text-base font-bold text-notion-text mt-1">{processInline(block.slice(4))}</h3>
+        if (block.startsWith('## '))     return <h2 key={i} className="font-serif text-lg font-bold text-notion-text mt-1">{processInline(block.slice(3))}</h2>
+        if (block.startsWith('# '))      return <h1 key={i} className="font-serif text-xl font-bold text-notion-text mt-1">{processInline(block.slice(2))}</h1>
 
         // Horizontal rule
         if (/^---+$/.test(block.trim())) {
@@ -148,12 +141,13 @@ export default function MarkdownText({ text }: MarkdownTextProps) {
           return <TableBlock key={i} block={block} />
         }
 
-        // Callout / tip block (> prefix)
+        // Callout / tip block (> prefix) — strip leading "> " from every line
         if (block.startsWith('> ')) {
+          const content = block.split('\n').map(l => l.replace(/^> ?/, '')).join('\n')
           return (
             <div key={i} className="border-l-4 border-notion-accent bg-notion-accent/5 px-4 py-3 rounded-r-md">
-              <p className="text-sm text-notion-text leading-relaxed">
-                {processInline(block.replace(/^> /, ''))}
+              <p className="text-sm text-notion-text leading-relaxed whitespace-pre-line">
+                {processInline(content)}
               </p>
             </div>
           )
@@ -170,15 +164,15 @@ export default function MarkdownText({ text }: MarkdownTextProps) {
           )
         }
 
-        // Bullet list block
-        if (block.startsWith('- ') || block.startsWith('* ')) {
+        // Bullet list block (-, *, + prefixes)
+        if (/^[-*+] /.test(block)) {
           const items = block.split('\n').filter(l => l.trim())
           return (
             <ul key={i} className="space-y-1.5">
               {items.map((item, j) => (
                 <li key={j} className="flex gap-2 text-sm text-notion-text">
                   <span className="text-notion-accent shrink-0 mt-0.5">•</span>
-                  <span className="leading-relaxed">{processInline(item.replace(/^[-*]\s+/, ''))}</span>
+                  <span className="leading-relaxed">{processInline(item.replace(/^[-*+]\s+/, ''))}</span>
                 </li>
               ))}
             </ul>
@@ -186,16 +180,16 @@ export default function MarkdownText({ text }: MarkdownTextProps) {
         }
 
         // Mixed block with inline bullets
-        if (block.includes('\n- ') || block.includes('\n* ')) {
+        if (block.includes('\n- ') || block.includes('\n* ') || block.includes('\n+ ')) {
           const lines = block.split('\n')
           return (
             <div key={i} className="space-y-1.5">
               {lines.map((line, j) => {
-                if (line.startsWith('- ') || line.startsWith('* ')) {
+                if (/^[-*+] /.test(line)) {
                   return (
                     <div key={j} className="flex gap-2 text-sm">
                       <span className="text-notion-accent shrink-0">•</span>
-                      <span className="text-notion-text leading-relaxed">{processInline(line.replace(/^[-*]\s+/, ''))}</span>
+                      <span className="text-notion-text leading-relaxed">{processInline(line.replace(/^[-*+]\s+/, ''))}</span>
                     </div>
                   )
                 }

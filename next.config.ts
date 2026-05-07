@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'cdn.aitimes.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'zdibothujvaswunapzmh.supabase.co',
+      },
     ],
   },
 }

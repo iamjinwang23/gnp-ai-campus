@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useAuth } from '@/contexts/AuthContext'
 import Header from '@/components/Header'
 import ArticleUploadModal from '@/components/ArticleUploadModal'
@@ -103,10 +104,11 @@ export default function ArticleListClient({ initialArticles }: Props) {
                   {/* Thumbnail */}
                   <div className="flex-none w-[120px] h-[68px] rounded-md overflow-hidden bg-notion-border">
                     {article.thumbnail_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <Image
                         src={article.thumbnail_url}
                         alt=""
+                        width={120}
+                        height={68}
                         className="w-full h-full object-cover"
                       />
                     ) : (
@@ -122,7 +124,11 @@ export default function ArticleListClient({ initialArticles }: Props) {
                   {/* Text */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5 mb-0.5">
-                      <span className="inline-block px-2 py-0.5 text-[10px] font-medium rounded-full bg-red-50 text-notion-accent border border-red-100">
+                      <span className={`inline-block px-2 py-0.5 text-[10px] font-medium rounded-full border ${
+                        article.category === '사례'
+                          ? 'bg-blue-50 text-blue-600 border-blue-100'
+                          : 'bg-red-50 text-notion-accent border-red-100'
+                      }`}>
                         {article.category}
                       </span>
                     </div>

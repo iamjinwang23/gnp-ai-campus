@@ -173,7 +173,7 @@ export default function ArticleUploadModal({ user, article, onClose, onSuccess }
           {/* URL */}
           <div>
             <label className="block text-xs font-medium text-notion-text mb-1">
-              링크 URL <span className="text-notion-secondary font-normal">(선택)</span>
+              링크 URL
             </label>
             <input
               type="url"
@@ -187,7 +187,7 @@ export default function ArticleUploadModal({ user, article, onClose, onSuccess }
           {/* Image upload */}
           <div>
             <label className="block text-xs font-medium text-notion-text mb-1">
-              썸네일 이미지 <span className="text-notion-secondary font-normal">(선택 · 최대 5MB)</span>
+              썸네일 이미지 <span className="text-notion-secondary font-normal">(최대 5MB)</span>
             </label>
             {imagePreview ? (
               <div className="relative rounded-lg overflow-hidden border border-notion-border">
@@ -228,13 +228,13 @@ export default function ArticleUploadModal({ user, article, onClose, onSuccess }
           {/* Body */}
           <div>
             <label className="block text-xs font-medium text-notion-text mb-1">
-              본문 <span className="text-notion-secondary font-normal">(선택 · 마크다운 지원)</span>
+              본문 <span className="text-notion-secondary font-normal">(마크다운 지원)</span>
             </label>
             <textarea
               value={body}
               onChange={(e) => setBody(e.target.value)}
-              placeholder="# 제목&#10;**굵게**, *기울임*, [링크](https://...)&#10;&#10;본문 내용을 입력하세요"
-              rows={6}
+              placeholder="# 제목&#10;**굵게**, *기울임*, ~~취소선~~, [링크](https://...)&#10;&#10;본문 내용을 입력하세요"
+              rows={16}
               className="w-full px-3 py-2 text-sm border border-notion-border rounded-lg focus:outline-none focus:ring-2 focus:ring-notion-accent/30 focus:border-notion-accent resize-none font-mono"
             />
           </div>
