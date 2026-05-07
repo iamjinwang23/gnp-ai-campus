@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { LECTURES } from '@/lib/content'
 import MarkdownText from '@/components/MarkdownText'
@@ -7,6 +8,24 @@ import LectureNav from '@/components/LectureNav'
 
 interface Props {
   params: Promise<{ id: string }>
+}
+
+const LECTURE_HERO_IMAGES: Record<number, string> = {
+  1: '/lectures/lecture-01-generative-ai-basics.png',
+  2: '/lectures/lecture-02-ai-organization.png',
+  3: '/lectures/lecture-03-prompt-engineering-1.png',
+  4: '/lectures/lecture-04-prompt-engineering-2.png',
+  5: '/lectures/lecture-05-persona-feedback.png',
+  6: '/lectures/lecture-06-deep-research-writing.png',
+  7: '/lectures/lecture-07-ai-agent.png',
+  8: '/lectures/lecture-08-ai-work-tools.png',
+  9: '/lectures/lecture-09-ai-portfolio-project.png',
+  10: '/lectures/lecture-10-my-gpts-settings.png',
+  11: '/lectures/lecture-11-vibe-coding-intro.png',
+  12: '/lectures/lecture-12-vibe-coding-practice.png',
+  13: '/lectures/lecture-13-chatgpt-claude-coding.png',
+  14: '/lectures/lecture-14-project-completion.png',
+  15: '/lectures/lecture-15-dev-environment.png',
 }
 
 export function generateStaticParams() {
@@ -35,15 +54,27 @@ export default async function LecturePage({ params }: Props) {
           <span className="text-xs text-notion-secondary font-medium">{lecture.id} / {LECTURES.length}</span>
         </div>
       </div>
-      <div className="bg-notion-text">
+      <div className="bg-white border-b border-notion-border">
         <div className="max-w-notion mx-auto px-6 py-8 md:py-10">
-          <span className="text-xs font-semibold text-white/50 uppercase tracking-widest">{lecture.number}</span>
-          <h1 className="mt-2 font-serif text-xl md:text-3xl font-bold text-white leading-snug">{lecture.title}</h1>
-          {lecture.description && <p className="mt-2 text-sm text-white/60 leading-relaxed">{lecture.description}</p>}
+          {LECTURE_HERO_IMAGES[lecture.id] && (
+            <div className="flex justify-center mb-6 md:mb-8">
+              <Image
+                src={LECTURE_HERO_IMAGES[lecture.id]}
+                alt={lecture.title}
+                width={1672}
+                height={941}
+                priority
+                className="w-full max-w-md md:max-w-lg h-auto rounded-lg"
+              />
+            </div>
+          )}
+          <span className="text-xs font-semibold text-notion-secondary uppercase tracking-widest">{lecture.number}</span>
+          <h1 className="mt-2 font-serif text-xl md:text-3xl font-bold text-notion-text leading-snug">{lecture.title}</h1>
+          {lecture.description && <p className="mt-2 text-sm text-notion-secondary leading-relaxed">{lecture.description}</p>}
           {lecture.topics.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2">
               {lecture.topics.map((topic, i) => (
-                <span key={i} className="text-xs px-2.5 py-1 bg-white/15 text-white/80 rounded-full">{topic}</span>
+                <span key={i} className="text-xs px-2.5 py-1 bg-notion-surface text-notion-text rounded-full border border-notion-border">{topic}</span>
               ))}
             </div>
           )}
