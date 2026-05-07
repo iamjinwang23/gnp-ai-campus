@@ -1305,6 +1305,7 @@ Vercel을 사용한 Next.js 앱 배포 (5분 완성):
         content: `VS Code(Visual Studio Code)는 Microsoft가 만든 무료 코드 편집기로, 바이브코딩에 가장 많이 사용됩니다.
 
 **VS Code 설치 방법**
+
 1. code.visualstudio.com 접속 (Apple Silicon/Intel 구분 확인)
 2. 운영체제에 맞는 버전 다운로드
 3. 설치 파일 실행 후 기본 설정으로 설치
@@ -1340,6 +1341,7 @@ Vercel을 사용한 Next.js 앱 배포 (5분 완성):
 - **Git History**: 커밋 히스토리 시각화
 
 **VS Code 유용한 단축키**
+
 - Cmd/Ctrl+P: 파일 빠른 열기
 - Cmd/Ctrl+Shift+P: 명령어 팔레트
 - Cmd/Ctrl+\`: 터미널 열기/닫기
